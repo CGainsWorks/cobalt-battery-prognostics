@@ -31,6 +31,7 @@ import pandas as pd
 
 from cobalt.sim.cell import CellParameters, DutyCycle
 from cobalt.sim.fleet import CellHistory, Fleet, FleetConfig
+from cobalt.textio import write_csv, write_json
 
 CYCLES_FILE = "cycles.csv.gz"
 CELLS_FILE = "cells.csv"
@@ -103,8 +104,8 @@ def write_fleet(fleet: Fleet, directory: Path) -> dict[str, str]:
     curves_path = directory / CURVES_FILE
     manifest_path = directory / MANIFEST_FILE
 
-    cycles_frame(fleet).to_csv(cycles_path, index=False, float_format="%.6g")
-    cells_frame(fleet).to_csv(cells_path, index=False, float_format="%.6g")
+    write_csv(cycles_frame(fleet), cycles_path)
+    write_csv(cells_frame(fleet), cells_path)
 
     arrays: dict[str, np.ndarray] = {"__voltage_grid__": fleet.voltage_grid}
     for cell in fleet.cells:
@@ -119,7 +120,7 @@ def write_fleet(fleet: Fleet, directory: Path) -> dict[str, str]:
         "censored_cells": sum(1 for cell in fleet.cells if cell.censored),
         "config": _config_to_json(fleet.config),
     }
-    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    write_json(manifest_path, manifest)
 
     return {
         "cycles": str(cycles_path),

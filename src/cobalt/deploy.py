@@ -13,7 +13,6 @@ model outlives the conversation in which somebody explained that.
 
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -27,6 +26,7 @@ from cobalt.features import early_life as early_life_features
 from cobalt.features import online as online_features
 from cobalt.models.conformal import ConformalRegressor
 from cobalt.models.registry import build, is_baseline
+from cobalt.textio import write_json
 
 EARLY_LIFE_ARTEFACT = "early_life_model.joblib"
 ONLINE_ARTEFACT = "online_model.joblib"
@@ -143,7 +143,7 @@ def train_and_save(
     joblib.dump(early, directory / EARLY_LIFE_ARTEFACT)
     joblib.dump(online, directory / ONLINE_ARTEFACT)
     card = build_model_card(config, early, online, summary)
-    (directory / MODEL_CARD).write_text(json.dumps(card, indent=2) + "\n", encoding="utf-8")
+    write_json(directory / MODEL_CARD, card)
 
     return {
         "early_life": str(directory / EARLY_LIFE_ARTEFACT),

@@ -33,6 +33,7 @@ from cobalt.evaluate.protocol import build_feature_tables, run_task
 from cobalt.features.online import window_features
 from cobalt.hal.simulated import SimulatedBms
 from cobalt.sim.fleet import simulate_fleet
+from cobalt.textio import write_json
 
 DEFAULT_CONFIG = "config/default.yaml"
 
@@ -276,7 +277,7 @@ def command_stream(args: argparse.Namespace) -> int:
     }
     output = Path(config.paths.artifacts_dir) / "stream_demo.json"
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    write_json(output, payload)
     _log(f"streamed {len(history)} cycles in {elapsed:.1f}s, wrote {output}")
     return 0
 

@@ -44,6 +44,7 @@ REQUIRED_MODULES = (
     "cobalt.cli",
     "cobalt.config",
     "cobalt.deploy",
+    "cobalt.textio",
 )
 
 
@@ -126,3 +127,58 @@ def test_the_gitignore_does_not_exclude_any_source_file() -> None:
         f".gitignore patterns {offending} match source directories at any depth. "
         f"Anchor them with a leading slash."
     )
+
+
+# -- generated files -----------------------------------------------------
+
+
+def test_no_committed_generated_file_has_a_carriage_return() -> None:
+    """Every file this repository generates must be written with LF endings.
+
+    `Path.write_text` translates newlines to the platform default, so the same
+    script writes different bytes on Windows and on Linux. For a file that is
+    committed and then checked against a regenerated copy, that is a permanent
+    spurious diff and the usual patch is a .gitattributes rule that hides it at
+    the repository boundary rather than fixing it at the source.
+
+    Everything goes through `cobalt.textio` instead, and this is what keeps it
+    that way.
+    """
+    from cobalt.config import repository_root
+    from cobalt.textio import has_carriage_return
+
+    root = repository_root()
+    patterns = (
+        "results/**/*.json",
+        "results/**/*.csv",
+        "analysis/**/*.md",
+        "artifacts/**/*.json",
+    )
+    offenders = [
+        str(path.relative_to(root))
+        for pattern in patterns
+        for path in root.glob(pattern)
+        if has_carriage_return(path)
+    ]
+    assert not offenders, f"generated files containing a carriage return: {offenders}"
+
+
+def test_the_text_helpers_write_lf_on_any_platform(tmp_path) -> None:
+    import pandas as pd
+
+    from cobalt.textio import has_carriage_return, write_csv, write_json, write_text
+
+    text_path = write_text(tmp_path / "a.md", "one" + chr(10) + "two" + chr(10))
+    json_path = write_json(tmp_path / "b.json", {"a": [1, 2]})
+    csv_path = write_csv(pd.DataFrame({"x": [1, 2], "y": [3.5, 4.5]}), tmp_path / "c.csv")
+
+    for path in (text_path, json_path, csv_path):
+        assert not has_carriage_return(path), path
+
+
+def test_write_text_normalises_input_that_already_has_carriage_returns(tmp_path) -> None:
+    from cobalt.textio import has_carriage_return, write_text
+
+    path = write_text(tmp_path / "d.md", "one" + chr(13) + chr(10) + "two" + chr(13))
+    assert not has_carriage_return(path)
+    assert path.read_text(encoding="utf-8") == "one" + chr(10) + "two" + chr(10)

@@ -10,7 +10,6 @@ red build rather than a quiet lie.
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Any
 
@@ -38,6 +37,7 @@ from cobalt.config import Config  # noqa: E402
 from cobalt.data.schema import FleetDataset  # noqa: E402
 from cobalt.evaluate.protocol import OutOfFoldPredictions  # noqa: E402
 from cobalt.models.conformal import implied_sigma  # noqa: E402
+from cobalt.textio import LF, write_csv, write_json, write_text  # noqa: E402
 
 #: Order protocols appear in every table, easiest first so the reader watches the
 #: numbers get worse rather than having to hunt for the honest one.
@@ -409,7 +409,7 @@ def update_readme(readme_path: Path, summary: dict[str, Any]) -> bool:
     original = readme_path.read_text(encoding="utf-8")
     updated = apply_blocks(original, render_tables(summary))
     if updated != original:
-        readme_path.write_text(updated, encoding="utf-8")
+        write_text(readme_path, updated)
         return True
     return False
 
@@ -764,11 +764,11 @@ def write_evaluation_markdown(summary: dict[str, Any], path: Path) -> None:
         f"{qualification['fraction_saved']:.1%}.",
         "",
     ]
-    Path(path).write_text("\n".join(lines), encoding="utf-8")
+    write_text(path, LF.join(lines) + LF)
 
 
 def write_summary(summary: dict[str, Any], path: Path) -> None:
-    Path(path).write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+    write_json(path, summary)
 
 
 def write_prediction_tables(
@@ -785,4 +785,4 @@ def write_prediction_tables(
         if predictions is None:
             continue
         frame: pd.DataFrame = predictions.as_frame()
-        frame.to_csv(directory / f"{prefix}_{protocol}.csv", index=False, float_format="%.6g")
+        write_csv(frame, directory / f"{prefix}_{protocol}.csv")

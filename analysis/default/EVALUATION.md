@@ -112,3 +112,4 @@ Maintenance scheduling, pounds per pack:
 Cycling a cell to end of life at 1281 median cycles takes
 85.4 days of a channel. Stopping at 100 cycles takes
 6.7 days, a saving of 92.2%.
+
