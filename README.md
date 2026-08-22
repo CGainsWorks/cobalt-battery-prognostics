@@ -94,9 +94,9 @@ Then one command reproduces every number on this page:
 bash scripts/run_demo.sh
 ```
 
-It simulates a 320-cell fleet, builds both feature tables, evaluates five models
-under every protocol, prices the decisions, draws the figures, fits the deployed
-models and rewrites the tables in this README. About four minutes on a laptop,
+It simulates a 320-cell fleet, builds both feature tables, evaluates every model
+under every protocol, prices both decisions, draws the figures, fits the deployed
+models and rewrites the tables in this README. About three minutes on a laptop,
 most of it in the simulator. No download and no GPU.
 
 If you only want to know whether it works, this takes about two minutes on a

@@ -161,6 +161,21 @@ jobs:
             bash -n "$script" && echo "ok: $script"
           done
 
+      - name: Every source file is tracked by git
+        # A `.gitignore` pattern written without a leading slash matches at any
+        # depth. `data/` was meant for the generated fleet at the repository
+        # root and silently excluded src/cobalt/data/ from the first commit.
+        # Everything passed locally and only a fresh clone was broken.
+        run: |
+          set -euo pipefail
+          untracked=$(git ls-files --others --exclude-standard -- src tests)
+          if [ -n "$untracked" ]; then
+            echo "these source files are not in the repository:"
+            echo "$untracked"
+            exit 1
+          fi
+          echo "every file under src/ and tests/ is tracked"
+
       - name: No absolute paths leaked into the committed JSON
         # A Windows path in a committed results file breaks every Linux
         # consumer of it, silently and much later.

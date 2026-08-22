@@ -8,7 +8,7 @@
 # deployed models, streams a pack through them over the hardware interface, and
 # rewrites the README's tables from the results.
 #
-# About four minutes on a laptop, almost all of it in the simulator. No download
+# About three minutes on a laptop, almost all of it in the simulator. No download
 # and no GPU. Deterministic given the seed in config/default.yaml.
 
 set -euo pipefail

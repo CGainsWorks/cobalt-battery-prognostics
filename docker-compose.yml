@@ -1,6 +1,6 @@
 # Two ways in.
 #
-#   docker compose up demo      reproduce every number, about four minutes
+#   docker compose up demo      reproduce every number, about three minutes
 #   docker compose up service   the fleet service on http://127.0.0.1:8000
 #
 # The demo writes into bind-mounted directories so the figures, results and

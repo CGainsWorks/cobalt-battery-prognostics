@@ -1,7 +1,12 @@
 # Generated fleet data. Half a million rows, regenerated in about seventy
 # seconds by `cobalt generate`, and invalidated by a one-line config change.
 # Carrying it in the repository would be tens of megabytes of derived files.
-data/
+#
+# The leading slash is load-bearing. Written as `data/` this pattern matches a
+# directory called `data` at ANY depth, which silently excluded the whole of
+# src/cobalt/data/ from the first commit. Everything still worked locally, and
+# a fresh clone was missing a subpackage.
+/data/
 
 # Everything else under results/, analysis/ and artifacts/ IS committed: the
 # README's tables are checked against results/default/summary.json on every
@@ -15,8 +20,8 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .eggs/
-build/
-dist/
+/build/
+/dist/
 .venv/
 venv/
 
