@@ -269,7 +269,10 @@ def command_stream(args: argparse.Namespace) -> int:
         "note": "simulated pack, no hardware involved. See docs/HARDWARE.md.",
         "cycles_streamed": len(history),
         "predictions": predictions,
-        "wall_clock_s": round(elapsed, 2),
+        # No wall-clock timing in here on purpose. This file is committed, and a
+        # duration would change on every run, so `make demo` would leave a dirty
+        # tree and the byte-identical rerun claim would stop holding. The timing
+        # is printed instead, where it is useful and harmless.
         "mean_prediction_interval_cycles": round(
             float(np.mean([p["remaining_upper"] - p["book_after_cycles"] for p in predictions])),
             1,

@@ -176,6 +176,41 @@ jobs:
           fi
           echo "every file under src/ and tests/ is tracked"
 
+      - name: The committed stream log is reproducible
+        # cobalt stream runs a simulated pack through the committed model over
+        # the hardware interface. Its output is committed, so it has to come out
+        # the same every time or `make demo` leaves a dirty tree and the
+        # byte-identical claim in the README stops holding.
+        run: |
+          set -euo pipefail
+          python -m cobalt.cli stream --config config/default.yaml
+          git diff --exit-code -- artifacts/default/stream_demo.json \
+            || { echo "the stream log changed between runs"; exit 1; }
+          echo "stream log reproduced byte for byte"
+
+      - name: The committed generated files use LF endings
+        # Path.write_text follows the platform, so a file written on Windows and
+        # one written here differ by a carriage return per line. Everything goes
+        # through cobalt.textio instead and this checks it stuck.
+        run: |
+          python - <<'PY'
+          import pathlib
+          import sys
+
+          patterns = ("results/**/*.json", "results/**/*.csv",
+                      "analysis/**/*.md", "artifacts/**/*.json")
+          carriage_return = chr(13).encode()
+          bad = [str(p) for pattern in patterns
+                 for p in pathlib.Path(".").glob(pattern)
+                 if carriage_return in p.read_bytes()]
+          if bad:
+              print("carriage returns in:")
+              for name in bad:
+                  print("  " + name)
+              sys.exit(1)
+          print("every committed generated file uses LF")
+          PY
+
       - name: No absolute paths leaked into the committed JSON
         # A Windows path in a committed results file breaks every Linux
         # consumer of it, silently and much later.
