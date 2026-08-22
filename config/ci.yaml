@@ -1,0 +1,95 @@
+# The same pipeline on a fleet small enough for a continuous integration runner.
+#
+# This proves that simulation, feature extraction, every split protocol, every
+# model, conformal calibration, both cost models, the figures and the service
+# all connect. It proves nothing whatsoever about accuracy: eight batches of six
+# cells is far too few to estimate a batch-independent error, and the fold
+# standard deviations it prints will be enormous.
+#
+# scripts/run_smoke.sh says so on every run, and the results it writes are
+# stamped with this config name so they cannot be mistaken for the real ones.
+
+name: ci
+seed: 4242
+
+paths:
+  data_dir: data/fleet-ci
+  results_dir: results/ci
+  analysis_dir: analysis/ci
+  artifacts_dir: artifacts/ci
+
+fleet:
+  n_batches: 8
+  cells_per_batch: 6
+  end_of_life_soh: 0.80
+  # Cells are pushed harder here so they reach end of life sooner and the whole
+  # run stays inside a couple of minutes.
+  max_cycles: 900
+  cycles_past_eol: 20
+
+  batch_sigma_sei: 0.20
+  batch_sigma_plate: 0.26
+  batch_sigma_knee: 0.11
+  batch_sigma_capacity: 0.013
+
+  cell_sigma_sei: 0.055
+  cell_sigma_plate: 0.070
+  cell_sigma_knee: 0.030
+  cell_sigma_capacity: 0.006
+  cell_sigma_resistance: 0.045
+
+  site_temperature_mean_c: 33.0
+  site_temperature_sigma_c: 6.0
+  cell_temperature_sigma_c: 1.6
+  site_charge_c_rate_choices: [1.5, 2.0, 3.0, 4.0]
+  cell_charge_c_rate_sigma: 0.10
+  discharge_c_rate: 1.0
+  depth_of_discharge_mean: 0.94
+  depth_of_discharge_sigma: 0.05
+  rest_hours_mean: 3.0
+  rest_hours_sigma: 1.2
+
+  curve_cycles: [2, 10, 100]
+  voltage_grid_v: [3.82, 3.34, 60]
+
+evaluation:
+  n_folds: 3
+  alpha: 0.10
+  calibration_fraction: 0.30
+  early_life_models:
+    - fleet_mean
+    - capacity_extrapolation
+    - ridge
+    - elastic_net
+    - gradient_boosting
+  online_models:
+    - fleet_mean
+    - slope_extrapolation
+    - ridge
+    - gradient_boosting
+  deployed_early_life_model: elastic_net
+  deployed_online_model: gradient_boosting
+
+online:
+  window_cycles: 40
+  stride: 20
+
+grading:
+  # Boundaries shifted down to match the shorter lives this fleet is driven to,
+  # so all three grades are actually populated and the confusion matrix is not
+  # a single column.
+  grade_a_min_cycles: 600
+  grade_b_min_cycles: 400
+  cost_matrix:
+    - [0.0, 55.0, 140.0]
+    - [260.0, 0.0, 85.0]
+    - [620.0, 310.0, 0.0]
+
+replacement:
+  cost_per_cycle_early: 2.40
+  cost_per_cycle_late: 14.00
+  fixed_replacement_cost: 0.0
+
+qualification:
+  hours_per_cycle: 1.6
+  channels: 1

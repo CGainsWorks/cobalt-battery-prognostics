@@ -1,0 +1,87 @@
+{
+  "data_source": "SIMULATED. No physical cells were tested. See docs/LIMITATIONS.md.",
+  "config_name": "default",
+  "seed": 20260822,
+  "intended_use": "Demonstration of a leakage-free evaluation protocol and a cost-aware decision layer for battery prognostics. Not qualified for use on real packs.",
+  "out_of_scope": [
+    "Any safety-related decision.",
+    "Any real cell chemistry, which this has never seen.",
+    "Warranty or resale pricing without recalibration on measured data."
+  ],
+  "models": {
+    "early_life": {
+      "name": "elastic_net",
+      "target": "log10 cycles to 80% of nameplate capacity",
+      "features": [
+        "log_var_delta_q",
+        "log_abs_min_delta_q",
+        "log_abs_mean_delta_q",
+        "log_norm_delta_q",
+        "capacity_cycle_2",
+        "capacity_cycle_100",
+        "capacity_fade_2_to_100",
+        "capacity_max_minus_cycle_2",
+        "log_abs_fade_slope",
+        "log_abs_late_fade_slope",
+        "resistance_cycle_2",
+        "resistance_cycle_100",
+        "resistance_rise_2_to_100",
+        "mean_temperature",
+        "max_temperature",
+        "temperature_integral",
+        "mean_charge_time",
+        "charge_time_drift",
+        "mean_coulombic_efficiency",
+        "charge_c_rate"
+      ],
+      "training_rows": 314,
+      "conformal_alpha": 0.1,
+      "conformal_calibration_rows": 96,
+      "reported": {
+        "protocol": "batch_independent",
+        "rmse_cycles": 289.0,
+        "mape": 0.1447,
+        "alpha_lambda": 0.7437,
+        "spearman": 0.9445,
+        "picp": 0.8592
+      }
+    },
+    "online_soh": {
+      "name": "gradient_boosting",
+      "target": "log10 remaining cycles to end of life",
+      "features": [
+        "soh_now",
+        "soh_window_start",
+        "soh_slope",
+        "soh_curvature",
+        "resistance_now",
+        "resistance_ratio",
+        "resistance_slope",
+        "mean_temperature",
+        "max_temperature",
+        "mean_charge_time",
+        "charge_time_slope",
+        "mean_coulombic_efficiency",
+        "log_throughput_ah",
+        "log_cycle_index",
+        "charge_c_rate",
+        "energy_per_ah"
+      ],
+      "training_rows": 16877,
+      "conformal_alpha": 0.1,
+      "conformal_calibration_rows": 5004,
+      "reported": {
+        "protocol": "batch_independent",
+        "rmse_cycles": 177.7,
+        "mape": 0.1722,
+        "alpha_lambda": 0.6778,
+        "spearman": 0.9749,
+        "picp": 0.9213
+      }
+    }
+  },
+  "decision_layer": {
+    "lot_acceptance": "cobalt.business.grading, cost matrix in the config",
+    "maintenance_scheduling": "cobalt.business.cost, newsvendor quantile 0.146"
+  }
+}

@@ -1,0 +1,63 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cobalt-battery-prognostics"
+version = "1.0.0"
+description = "Early-life cycle-life prediction and online state-of-health estimation for lithium-ion packs, with a leakage-free evaluation protocol and a cost model"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { file = "LICENSE" }
+authors = [{ name = "CGainsWorks" }]
+keywords = ["battery", "prognostics", "state-of-health", "remaining-useful-life", "conformal"]
+
+dependencies = [
+    "numpy>=2.5",
+    "pandas>=3.0",
+    "scipy>=1.18",
+    "scikit-learn>=1.9",
+    "PyYAML>=6.0",
+    "matplotlib>=3.11",
+    "fastapi>=0.121",
+    "uvicorn>=0.41",
+    "joblib>=1.4",
+]
+
+[project.scripts]
+cobalt = "cobalt.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["cobalt*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--strict-markers -q"
+markers = [
+    "slow: takes more than a couple of seconds, deselect with -m 'not slow'",
+]
+filterwarnings = [
+    # matplotlib's font cache rebuild and sklearn's convergence chatter are not
+    # actionable here, and both are loud on a cold CI runner.
+    "ignore::DeprecationWarning",
+    "ignore::UserWarning:matplotlib.*",
+    "ignore::UserWarning:sklearn.*",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = [".venv", "data", "artifacts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM"]
+ignore = [
+    # zip(strict=) would be right everywhere here, but the pairs are known to be
+    # equal length by construction and the noise is not worth it.
+    "B905",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# FastAPI dependency injection is function calls in argument defaults by design.
+"src/cobalt/service/*" = ["B008"]

@@ -1,0 +1,11 @@
+# Normalise line endings so a checkout on Windows and one on Linux produce the
+# same bytes, and so the shell scripts stay executable on a CI runner.
+* text=auto eol=lf
+
+*.png binary
+*.joblib binary
+*.npz binary
+*.csv.gz binary
+
+*.sh text eol=lf
+Makefile text eol=lf

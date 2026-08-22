@@ -1,0 +1,95 @@
+# The configuration that produces every number in the README.
+#
+# `make demo` runs this end to end from nothing: simulate the fleet, build both
+# feature tables, evaluate every model under every protocol, price the
+# decisions, write the figures and update the README's tables in place.
+#
+# Roughly six minutes on a laptop, almost all of it in the simulator.
+
+name: default
+seed: 20260822
+
+paths:
+  data_dir: data/fleet
+  results_dir: results/default
+  analysis_dir: analysis/default
+  artifacts_dir: artifacts/default
+
+fleet:
+  # Twenty batches is the smallest number that supports four-fold
+  # batch-independent cross-validation with five batches held out each time and
+  # still leaves the fold-to-fold spread interpretable.
+  n_batches: 20
+  cells_per_batch: 16
+  end_of_life_soh: 0.80
+  max_cycles: 3000
+  cycles_past_eol: 40
+
+  # Between-batch spread, several times the within-batch spread. This ratio is
+  # what makes the batch-independent protocol a genuinely different question
+  # from the cell-independent one. docs/EVALUATION_PROTOCOL.md has the argument.
+  batch_sigma_sei: 0.20
+  batch_sigma_plate: 0.26
+  batch_sigma_knee: 0.11
+  batch_sigma_capacity: 0.013
+
+  cell_sigma_sei: 0.055
+  cell_sigma_plate: 0.070
+  cell_sigma_knee: 0.030
+  cell_sigma_capacity: 0.006
+  cell_sigma_resistance: 0.045
+
+  site_temperature_mean_c: 27.0
+  site_temperature_sigma_c: 7.5
+  cell_temperature_sigma_c: 1.6
+  site_charge_c_rate_choices: [0.5, 1.0, 1.5, 2.0, 3.0, 4.0]
+  cell_charge_c_rate_sigma: 0.10
+  discharge_c_rate: 1.0
+  depth_of_discharge_mean: 0.94
+  depth_of_discharge_sigma: 0.05
+  rest_hours_mean: 3.0
+  rest_hours_sigma: 1.2
+
+  curve_cycles: [2, 10, 100]
+  voltage_grid_v: [3.82, 3.34, 60]
+
+evaluation:
+  n_folds: 4
+  alpha: 0.10
+  calibration_fraction: 0.30
+  early_life_models:
+    - fleet_mean
+    - capacity_extrapolation
+    - ridge
+    - elastic_net
+    - gradient_boosting
+  online_models:
+    - fleet_mean
+    - slope_extrapolation
+    - ridge
+    - gradient_boosting
+  deployed_early_life_model: elastic_net
+  deployed_online_model: gradient_boosting
+
+online:
+  window_cycles: 50
+  stride: 25
+
+# Illustrative commercial assumptions, sized for a small commercial pack.
+# These set the shape of the answer. They are configuration, not findings.
+grading:
+  grade_a_min_cycles: 1200
+  grade_b_min_cycles: 700
+  cost_matrix:
+    - [0.0, 55.0, 140.0]
+    - [260.0, 0.0, 85.0]
+    - [620.0, 310.0, 0.0]
+
+replacement:
+  cost_per_cycle_early: 2.40
+  cost_per_cycle_late: 14.00
+  fixed_replacement_cost: 0.0
+
+qualification:
+  hours_per_cycle: 1.6
+  channels: 1

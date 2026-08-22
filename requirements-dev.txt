@@ -1,0 +1,8 @@
+-r requirements.txt
+
+# Test and lint only. The service tests drive the FastAPI app through httpx
+# rather than binding a port, so nothing here needs a running server.
+httpx==0.28.1
+pytest==9.1.1
+pytest-cov==7.1.0
+ruff==0.16.4

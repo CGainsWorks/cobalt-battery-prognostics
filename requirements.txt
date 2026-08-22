@@ -1,0 +1,11 @@
+# Runtime dependencies. Pinned so a fresh checkout reproduces the numbers in the
+# README rather than something near them. These are the versions the committed
+# results were produced on.
+numpy==2.5.2
+pandas==3.0.5
+scipy==1.18.1
+scikit-learn==1.9.0
+PyYAML==6.0.3
+matplotlib==3.11.1
+fastapi==0.141.1
+uvicorn==0.52.4
