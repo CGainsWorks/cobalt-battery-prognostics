@@ -1,4 +1,4 @@
-"""Prediction intervals, and how to get them wrong.
+"""Prediction intervals and how to get them wrong.
 
 A point estimate of remaining life is not a decision. "About 900 cycles" and
 "between 300 and 1500 cycles" carry the same number and imply completely
@@ -6,13 +6,13 @@ different amounts of spare stock, so the interval is the deliverable and the
 point estimate is a summary of it.
 
 Split conformal prediction is used here because it makes one assumption,
-exchangeability between the calibration set and the test set, and because that
+exchangeability between the calibration set and the test set and because that
 assumption is precisely the one this repository is about. Calibrate on cells
-drawn at random from batches the model has already seen, and the residuals are
+drawn at random from batches the model has already seen and the residuals are
 smaller than they will be on a new lot, so the interval comes out too narrow and
 the coverage it advertises is not the coverage it delivers.
 
-So :class:`ConformalRegressor` takes a ``groups`` argument, and holds out whole
+So :class:`ConformalRegressor` takes a ``groups`` argument and holds out whole
 groups for calibration when it is given one. `cobalt.evaluate.protocol` runs it
 both ways and reports the coverage gap, which is the concrete cost of a
 mismatched calibration set.
@@ -97,7 +97,7 @@ class ConformalRegressor:
             self.n_fit_groups = len(unique) - n_held
             if self.n_fit_groups < MIN_FIT_GROUPS:
                 # Grouped calibration is not free. It takes whole groups out of
-                # the fit, and when there are only a handful to begin with the
+                # the fit and when there are only a handful to begin with the
                 # model loses more from the missing diversity than the
                 # calibration gains from being out of group. Below this many
                 # groups the comparison between grouped and random calibration
@@ -168,7 +168,7 @@ def implied_sigma(half_width: float, alpha: float) -> float:
     alternative in common use, which is to pretend the point estimate is the
     whole answer.
 
-    A conformalised quantile regressor would remove the assumption entirely, and
+    A conformalised quantile regressor would remove the assumption entirely and
     `docs/LIMITATIONS.md` lists it as the obvious next piece of work.
     """
     if half_width <= 0.0:

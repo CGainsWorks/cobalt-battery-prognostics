@@ -5,7 +5,7 @@
 #
 # Simulates the 320-cell fleet, builds both feature tables, evaluates every model
 # under every protocol, prices both decisions, draws the figures, fits the
-# deployed models, streams a pack through them over the hardware interface, and
+# deployed models, streams a pack through them over the hardware interface and
 # rewrites the README's tables from the results.
 #
 # About three minutes on a laptop, almost all of it in the simulator. No download
@@ -42,7 +42,7 @@ cat <<'DONE'
   artifacts/default/               the fitted models and their model card
 
 Every number in README.md was regenerated from summary.json. Nothing in it was
-typed by hand, and `make check` will fail if that stops being true.
+typed by hand and `make check` will fail if that stops being true.
 
 Remember what the numbers are: simulated cells, no hardware. docs/LIMITATIONS.md
 DONE

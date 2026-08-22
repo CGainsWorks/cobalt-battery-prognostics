@@ -1,11 +1,11 @@
 """Verify the README's tables against the results that produced them.
 
-A results table in a README is a claim about what a script printed, and it stops
+A results table in a README is a claim about what a script printed and it stops
 being true the first time somebody reruns the pipeline and forgets to paste the
 new numbers in. That is not a hypothetical: it is the normal life cycle of every
 results table in every repository.
 
-So the tables are generated, never typed, and this check regenerates them from
+So the tables are generated, never typed and this check regenerates them from
 ``summary.json`` and diffs. Continuous integration runs it on every push, which
 makes a stale number a failing build.
 

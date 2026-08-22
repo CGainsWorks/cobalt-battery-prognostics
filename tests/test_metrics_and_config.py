@@ -50,7 +50,7 @@ def test_bias_keeps_its_sign():
 
 
 def test_a_constant_prediction_gets_a_rank_correlation_of_zero():
-    """Spearman is undefined on a constant, and a NaN would poison every aggregate."""
+    """Spearman is undefined on a constant and a NaN would poison every aggregate."""
     truth = np.log10(np.array([100.0, 500.0, 900.0, 1200.0]))
     metrics = regression_metrics(truth, np.full(4, np.log10(400.0)))
     assert metrics["spearman"] == 0.0

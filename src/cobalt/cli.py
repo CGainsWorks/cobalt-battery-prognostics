@@ -9,7 +9,7 @@
 `make demo` is `generate` then `evaluate` then `stream`. Everything takes
 ``--config`` and everything is deterministic given the seed in it.
 
-Argparse rather than a CLI framework: five commands do not justify a dependency,
+Argparse rather than a CLI framework: five commands do not justify a dependency
 and the one thing that would justify it, rich help output, is not worth the
 supply chain.
 """
@@ -311,7 +311,7 @@ def build_parser() -> argparse.ArgumentParser:
     generate.set_defaults(handler=command_generate)
 
     evaluate = subparsers.add_parser(
-        "evaluate", help="run every model under every protocol, price it, and write the report"
+        "evaluate", help="run every model under every protocol, price it and write the report"
     )
     add_config(evaluate)
     evaluate.add_argument("--no-figures", action="store_true", help="skip the plots")

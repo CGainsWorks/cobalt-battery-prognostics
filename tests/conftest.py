@@ -24,7 +24,7 @@ from cobalt.sim.fleet import FleetConfig, simulate_fleet
 
 @pytest.fixture(scope="session")
 def tiny_fleet_config() -> FleetConfig:
-    """A fleet that ages fast: hot, fast-charged, and shallow on cycles."""
+    """A fleet that ages fast: hot, fast-charged and shallow on cycles."""
     return FleetConfig(
         n_batches=4,
         cells_per_batch=4,

@@ -2,7 +2,7 @@
 
 These are the tests with closed-form answers, so they check arithmetic against
 theory rather than against a stored output. The newsvendor optimum in particular
-is a textbook result, and a numerical search over the same cost function has to
+is a textbook result and a numerical search over the same cost function has to
 land on it.
 """
 

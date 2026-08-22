@@ -1,7 +1,7 @@
 """The split protocols, which are the part it would be easiest to get quietly wrong.
 
 Every test here is about one question: does a split honour the claim its name
-makes? A protocol is a string in a config file, and the difference between an
+makes? A protocol is a string in a config file and the difference between an
 honest number and a worthless one is whether that string is wired to the
 grouping it names. Nothing about a wrong wiring looks wrong at runtime.
 """

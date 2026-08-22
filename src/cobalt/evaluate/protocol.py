@@ -2,13 +2,13 @@
 
 The structure is deliberately boring. What matters is that a single function
 runs the leaky protocol and the honest ones through identical code, so the gap
-between them cannot be an artefact of two different evaluation paths, and that
+between them cannot be an artefact of two different evaluation paths and that
 every fold is checked for the leakage its protocol claims to exclude before a
 single number comes out of it.
 
 Out-of-fold predictions are pooled and kept. Every cell appears in exactly one
 test fold, so the pooled vector is a complete leave-one-group-out prediction for
-the whole dataset, and it is what the cost models are priced against. Pricing
+the whole dataset and it is what the cost models are priced against. Pricing
 against a single fold would put the business numbers at the mercy of which
 batches happened to land in it.
 """
@@ -194,7 +194,7 @@ def run_task(task: str, frame: pd.DataFrame, config: Config) -> dict[str, Any]:
 
     The deployed model is additionally run with conformal intervals twice: once
     calibrated the way the protocol demands, once calibrated on random rows. The
-    second is the mistake, and the coverage gap between them is what it costs.
+    second is the mistake and the coverage gap between them is what it costs.
     """
     protocols = TASK_PROTOCOLS[task]
     model_names = (

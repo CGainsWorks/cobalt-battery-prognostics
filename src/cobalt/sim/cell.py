@@ -22,7 +22,7 @@ dominate the published ageing literature for graphite/NMC-class cells:
 It is **not** fitted to a real cell. No parameter here was regressed against
 laboratory data, because there was no laboratory. The parameter values produce
 fade curves, knee behaviour and Arrhenius sensitivity of roughly the right shape
-and magnitude, and that is the whole claim. See `docs/LIMITATIONS.md`.
+and magnitude and that is the whole claim. See `docs/LIMITATIONS.md`.
 """
 
 from __future__ import annotations
@@ -280,7 +280,7 @@ class Cell:
     # -- ageing -------------------------------------------------------------
 
     def step(self) -> CycleRecord:
-        """Age the cell by one full charge, rest and discharge, and log it."""
+        """Age the cell by one full charge, rest and discharge and log it."""
         p = self.parameters
         duty = self.duty
 
@@ -288,7 +288,7 @@ class Cell:
         temperature_k = temperature_c + 273.15
 
         # Wall-clock hours the cycle occupies. Depth of discharge sets how much
-        # charge moves, the C-rates set how fast, and the rest is calendar time.
+        # charge moves, the C-rates set how fast and the rest is calendar time.
         active_hours = duty.depth_of_discharge * (
             1.0 / duty.charge_c_rate + 1.0 / duty.discharge_c_rate
         )
@@ -323,7 +323,7 @@ class Cell:
         )
         measured_temperature = temperature_c + rng.normal(0.0, self._temperature_noise_c)
 
-        # Coulombic efficiency below one: charge in exceeds discharge out, and the
+        # Coulombic efficiency below one: charge in exceeds discharge out and the
         # gap widens as the parasitic side reactions grow.
         efficiency = 0.998 - 0.020 * (self._sei_loss + self._plating_loss)
         charge_capacity = measured_capacity / max(efficiency, 0.90)

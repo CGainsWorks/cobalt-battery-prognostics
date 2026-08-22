@@ -1,18 +1,18 @@
 """The seam between this repository and a real battery.
 
-Everything upstream of here consumes :class:`CycleTelemetry`, and nothing
+Everything upstream of here consumes :class:`CycleTelemetry` and nothing
 upstream knows or cares where it came from. There are two implementations. One
 replays a simulated cell and is what every test, figure and number in this
 repository runs on. The other talks to a real battery management system over a
 serial link and is **not implemented**, because there was no hardware.
 
 That is the honest state of it. The interface exists, the simulated side is
-complete and exercised, and the hardware side is a documented gap with a
+complete and exercised and the hardware side is a documented gap with a
 specific shape rather than a vague intention. `docs/HARDWARE.md` lists the rig
 it needs and exactly which methods have to be filled in.
 
 Keeping the boundary this narrow is the point: when a cycler does arrive, the
-work is one class, and the feature extraction, the models, the service and the
+work is one class and the feature extraction, the models, the service and the
 tests are all already written against telemetry rather than against a simulator.
 """
 
@@ -27,7 +27,7 @@ class CycleTelemetry:
     """One cycle's worth of battery management system output.
 
     Every field here is something a production BMS already puts on a CAN bus or
-    a serial link. Nothing on this record requires a laboratory instrument, and
+    a serial link. Nothing on this record requires a laboratory instrument and
     that constraint is what makes the online model deployable rather than an
     exercise.
     """
@@ -75,6 +75,6 @@ class NoHardwareError(BmsError, NotImplementedError):
     """Raised by every hardware-backed source in this repository.
 
     Deliberately a subclass of both, so a caller that is checking for a missing
-    feature and a caller that is checking for a dead link both catch it, and so
+    feature and a caller that is checking for a dead link both catch it and so
     it never gets mistaken for a bug in the pipeline.
     """

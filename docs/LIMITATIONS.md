@@ -1,6 +1,6 @@
 # Limitations
 
-What this repository is evidence for, and what it is not. Written plainly,
+What this repository is evidence for and what it is not. Written plainly,
 because the interesting parts of the work are worth less if the boundary around
 them is vague.
 
@@ -13,7 +13,7 @@ cells.** Every figure, table and model in this repository was produced from the
 simulator in `cobalt.sim`.
 
 That is stated in the README's first paragraph, in the first field of the model
-card, in the OpenAPI description of the service, and in the docstring of the
+card, in the OpenAPI description of the service and in the docstring of the
 module that would talk to real hardware. It is not a caveat added at the end.
 
 ---
@@ -25,7 +25,7 @@ module that would talk to real hardware. It is not a caveat added at the end.
 The simulator is a lumped empirical model. It is not fitted to laboratory data,
 because there was no laboratory. Its parameters were chosen to produce fade
 curves, knee behaviour and Arrhenius sensitivity of roughly the right shape and
-magnitude, and that is the entire claim being made for it.
+magnitude and that is the entire claim being made for it.
 
 Real cells are noisier, less consistent and less well-behaved in ways that are
 specific and known:
@@ -36,7 +36,7 @@ specific and known:
   charge early in life leaves plated lithium that changes everything afterwards.
 - **No sudden failures.** Separator defects, tab welds, vent events and internal
   short circuits are absent. The simulated fleet has a smooth cycle-life
-  distribution with no tail of early deaths, and that tail is where the money is
+  distribution with no tail of early deaths and that tail is where the money is
   in a real fleet.
 - **Idealised measurement.** Sensor noise is independent and Gaussian. Real
   battery-management-system telemetry has drift, quantisation, dropped frames,
@@ -46,7 +46,7 @@ specific and known:
 ### One symptom of this is measurable inside the repository
 
 The elastic net, fitted on this data, puts most of its weight on
-`log_abs_fade_slope` and `charge_time_drift`, and gives the `dQ(V)` variance a
+`log_abs_fade_slope` and `charge_time_drift` and gives the `dQ(V)` variance a
 small coefficient. In the published real-cell result the `dQ(V)` variance
 dominates.
 
@@ -58,23 +58,23 @@ makes `dQ(V)` worth the trouble of computing. **A simulator cannot reproduce the
 motivation for a feature it has designed away.**
 
 This is worth stating because it is the most concrete evidence in the repository
-about the direction of its own bias, and it points the same way as everything
+about the direction of its own bias and it points the same way as everything
 else: the simulated problem is easier than the real one.
 
 ### The methodology is the transferable part
 
 Three results here are properties of the evaluation and the decision theory
-rather than of the chemistry, and they hold on any dataset with group structure:
+rather than of the chemistry and they hold on any dataset with group structure:
 
-1. A random split over overlapping windows leaks, and the leak is large.
-2. Conformal intervals calibrated on random rows undercover on a held-out group,
-   and calibrating on held-out groups fixes it — provided enough groups remain
+1. A random split over overlapping windows leaks and the leak is large.
+2. Conformal intervals calibrated on random rows undercover on a held-out group
+   and calibrating on held-out groups fixes it, provided enough groups remain
    in the fit.
 3. Under asymmetric costs the decision is a quantile of the predictive
-   distribution, not a point estimate, and the naive "use the interval bound"
+   distribution, not a point estimate and the naive "use the interval bound"
    heuristic overshoots.
 
-Those would be worth writing up from real cells too, and the code that produces
+Those would be worth writing up from real cells too and the code that produces
 them does not care where the telemetry came from.
 
 ---
@@ -91,7 +91,7 @@ them does not care where the telemetry came from.
   gets the same interval as one it is confident about. Conformalised quantile
   regression fixes this too.
 - **Right-censored cells are dropped, not modelled.** Six of 320 cells in the
-  default fleet never reached end of life inside the cycle ceiling, and they are
+  default fleet never reached end of life inside the cycle ceiling and they are
   excluded with a count. On real data censoring is much more common and dropping
   it biases the labels short. Survival analysis is the correct tool and is not
   used here.
@@ -108,9 +108,9 @@ them does not care where the telemetry came from.
 ## Things the numbers are not
 
 - **The cost figures are illustrative.** £2.40 per cycle of discarded life,
-  £14.00 per cycle run past end of life, and the grading cost matrix, are sized
+  £14.00 per cycle run past end of life and the grading cost matrix, are sized
   for a small commercial pack and live in `config/default.yaml`. They are
-  configuration, not findings. They set the shape of the answer, and changing
+  configuration, not findings. They set the shape of the answer and changing
   them changes which decision rule wins.
 - **The £637 per pack is not a saving anybody can bank.** It is the cost of one
   scheduling policy against another under one set of assumed prices on one
@@ -120,7 +120,7 @@ them does not care where the telemetry came from.
   in-memory dictionary behind a lock. There is no authentication, no persistence
   and no multi-process story. Those are real decisions with real operational
   consequences and making them here on no evidence would be guessing.
-- **Nothing here is qualified for a safety-related decision**, and the model card
+- **Nothing here is qualified for a safety-related decision** and the model card
   says so under `out_of_scope`.
 
 ---

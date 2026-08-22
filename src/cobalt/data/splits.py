@@ -1,6 +1,6 @@
 """Train and test splits, including the ones that lie.
 
-Three protocols, and the whole point of the repository is the distance between
+Three protocols and the whole point of the repository is the distance between
 them:
 
 ``random_cycle``
@@ -17,10 +17,10 @@ them:
 
 ``batch_independent``
     Hold out whole batches. This is the arrival of a new manufacturing lot at a
-    new site, which is the situation a fleet operator is actually in, and it is
+    new site, which is the situation a fleet operator is actually in and it is
     the number this repository leads with.
 
-Every function returns index arrays into the frame it was handed, and every one
+Every function returns index arrays into the frame it was handed and every one
 is deterministic given the seed.
 """
 
@@ -140,7 +140,7 @@ def build_splits(
 def assert_no_leakage(frame: pd.DataFrame, split: Split) -> None:
     """Check a split really honours its own claim.
 
-    Cheap, and it has already earned its place: a protocol is one string in a
+    Cheap and it has already earned its place: a protocol is one string in a
     config file and the difference between an honest number and a fraudulent one
     is whether that string is wired to the grouping the name implies.
     """

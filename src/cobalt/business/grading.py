@@ -1,22 +1,22 @@
-"""Lot acceptance: what grade does this cell get, and what does getting it wrong cost?
+"""Lot acceptance: what grade does this cell get and what does getting it wrong cost?
 
 The early-life model exists to support one decision. A lot of cells arrives,
-each one gets a grade, and the grade decides where it goes: a premium
+each one gets a grade and the grade decides where it goes: a premium
 application that needs long life, a standard one, or the second-life channel.
 
 The costs are wildly asymmetric and that asymmetry is the entire point.
 Undergrading a good cell loses the margin between two price bands, which is
 tens of pounds. Overgrading a poor one puts a cell that will not last into an
-application that assumed it would, and the bill for that arrives as a field
+application that assumed it would and the bill for that arrives as a field
 replacement with labour and downtime attached.
 
 A model selected on RMSE does not know any of this. Two models with identical
 RMSE can differ by a factor of three in cost per cell, depending on which
-direction they err in, and this module is what makes that visible.
+direction they err in and this module is what makes that visible.
 
 The grade boundaries and the cost figures are illustrative, chosen to be the
 right order of magnitude for a small commercial pack. They are configuration,
-not findings, and `config/default.yaml` is where they live.
+not findings and `config/default.yaml` is where they live.
 """
 
 from __future__ import annotations
@@ -30,7 +30,7 @@ GRADES = ("A", "B", "C")
 
 @dataclass(frozen=True)
 class GradingPolicy:
-    """Cycle-life boundaries between grades, and what misgrading costs.
+    """Cycle-life boundaries between grades and what misgrading costs.
 
     ``cost_matrix`` is indexed ``[true_grade][assigned_grade]`` in the order of
     :data:`GRADES`. The diagonal is zero by definition: grading a cell correctly
@@ -119,12 +119,12 @@ def minimum_expected_cost_grade(
 ) -> np.ndarray:
     """Assign the grade with the lowest expected cost under the cost matrix.
 
-    This is the rule the cost matrix actually implies, and it is worth spelling
+    This is the rule the cost matrix actually implies and it is worth spelling
     out why neither of the obvious alternatives is it.
 
     The **point estimate** rule reads the predicted life and looks up the grade.
     It behaves as though the prediction were certain, so it happily assigns
-    grade A to a cell that is one standard deviation from being a C, and the
+    grade A to a cell that is one standard deviation from being a C and the
     cost matrix charges six hundred pounds for that.
 
     The **lower bound** rule grades on the pessimistic end of the interval. It
@@ -134,9 +134,9 @@ def minimum_expected_cost_grade(
     what the results table in this repository shows.
 
     What the matrix actually asks for is an expectation. Take the predictive
-    distribution, integrate the probability of each true grade, and pick the
+    distribution, integrate the probability of each true grade and pick the
     assignment minimising expected cost. With three grades and a Gaussian in log
-    space it is one line of arithmetic per cell, and it dominates both.
+    space it is one line of arithmetic per cell and it dominates both.
     """
     from scipy.stats import norm
 
@@ -194,7 +194,7 @@ def constant_grade_baseline(true_cycle_life: np.ndarray, policy: GradingPolicy) 
     """Grade every cell B and never test anything. The do-nothing option.
 
     Worth reporting because on a fleet with a healthy median it is not a
-    disaster, and any model that costs more than this is worse than no model.
+    disaster and any model that costs more than this is worse than no model.
     """
     assigned = np.full(np.asarray(true_cycle_life).shape, 1, dtype=int)
     return evaluate_grading(true_cycle_life, assigned, policy)

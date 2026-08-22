@@ -39,7 +39,7 @@ markers = [
 ]
 filterwarnings = [
     # matplotlib's font cache rebuild and sklearn's convergence chatter are not
-    # actionable here, and both are loud on a cold CI runner.
+    # actionable here and both are loud on a cold CI runner.
     "ignore::DeprecationWarning",
     "ignore::UserWarning:matplotlib.*",
     "ignore::UserWarning:sklearn.*",
@@ -53,7 +53,7 @@ extend-exclude = [".venv", "data", "artifacts"]
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM"]
 ignore = [
-    # zip(strict=) would be right everywhere here, but the pairs are known to be
+    # zip(strict=) would be right everywhere here but the pairs are known to be
     # equal length by construction and the noise is not worth it.
     "B905",
 ]

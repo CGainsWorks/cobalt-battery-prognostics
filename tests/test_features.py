@@ -1,6 +1,6 @@
-"""Feature extraction, and the two things it must never do.
+"""Feature extraction and the two things it must never do.
 
-It must never emit a feature that could not be measured on a real pack, and it
+It must never emit a feature that could not be measured on a real pack and it
 must never emit one derived from the label. Both are easy to do by accident and
 neither shows up as an error: the first produces a model that cannot be
 deployed, the second produces a model that looks superb and is worthless.
@@ -147,7 +147,7 @@ def test_online_features_exclude_a_full_reference_discharge(tiny_dataset, tiny_c
     """The online model must not need something a fleet pack rarely provides.
 
     Nothing in the feature list may be a raw discharge capacity: the pack in
-    service gets partial discharges, and a feature that silently assumes a
+    service gets partial discharges and a feature that silently assumes a
     laboratory reference test is a model that cannot be deployed.
     """
     assert "discharge_capacity_ah" not in online.FEATURE_NAMES

@@ -2,7 +2,7 @@
 
 A fleet is not a bag of independent cells and pretending otherwise is the
 single most common way a battery prognostics result gets overstated. Cells
-arrive in manufacturing lots that share an electrode coating run, and they get
+arrive in manufacturing lots that share an electrode coating run and they get
 deployed to sites that share a climate and a duty cycle. Two cells from the
 same batch are far more alike than two cells drawn at random.
 
@@ -17,8 +17,8 @@ So this generator builds correlation in deliberately, at two levels:
 
 The consequence is that holding out random cells leaks: for every test cell
 there are siblings in the training set built on the same coating run and run at
-the same site. Holding out whole batches does not leak, and it is what happens
-when a new lot arrives. `docs/EVALUATION_PROTOCOL.md` has the full argument, and
+the same site. Holding out whole batches does not leak and it is what happens
+when a new lot arrives. `docs/EVALUATION_PROTOCOL.md` has the full argument and
 `cobalt.data.splits` implements both so the gap can be measured rather than
 asserted.
 """
@@ -79,7 +79,7 @@ class FleetConfig:
 
 @dataclass
 class CellHistory:
-    """One simulated cell: its identity, how it was built and used, and its log."""
+    """One simulated cell: its identity, how it was built and used and its log."""
 
     cell_id: str
     batch_id: str
@@ -189,7 +189,7 @@ def simulate_cell(
     voltage_grid: np.ndarray,
     rng: np.random.Generator,
 ) -> CellHistory:
-    """Cycle one cell to end of life, or to the ceiling, and keep the log."""
+    """Cycle one cell to end of life, or to the ceiling and keep the log."""
     cell = Cell(parameters, duty, rng=rng)
     history = CellHistory(cell_id=cell_id, batch_id=batch_id, parameters=parameters, duty=duty)
 

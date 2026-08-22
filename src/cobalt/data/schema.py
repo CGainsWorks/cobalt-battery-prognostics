@@ -7,7 +7,7 @@ Three files, because they have three different shapes and three different sizes:
     the big one and it is the input to the online state-of-health task.
 
 ``cells.csv``
-    One row per cell. Identity, batch, how it was used, and the label: cycles to
+    One row per cell. Identity, batch, how it was used and the label: cycles to
     end of life. This is the input to the early-life task.
 
 ``curves.npz``
@@ -94,7 +94,7 @@ def cells_frame(fleet: Fleet) -> pd.DataFrame:
 
 
 def write_fleet(fleet: Fleet, directory: Path) -> dict[str, str]:
-    """Write all three files plus a manifest, and return the paths written."""
+    """Write all three files plus a manifest and return the paths written."""
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
 

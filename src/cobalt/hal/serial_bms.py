@@ -1,21 +1,21 @@
-"""The hardware-backed source. Not implemented, and this file explains why.
+"""The hardware-backed source. Not implemented and this file explains why.
 
 **There was no hardware.** No cycler, no thermal chamber, no cells. Every number
-in this repository comes from the simulator in `cobalt.sim`, and this module is
+in this repository comes from the simulator in `cobalt.sim` and this module is
 the place where that limitation is concrete rather than a caveat in a README.
 
 Rather than delete it, the interface is defined and every method raises
 :class:`~cobalt.hal.base.NoHardwareError` with a message saying what it would
 need. That is a more useful artefact than an empty space: it fixes the shape of
 the work, it keeps the rest of the codebase honestly written against an
-interface rather than against a simulator, and it is checked by a test that
+interface rather than against a simulator and it is checked by a test that
 asserts these methods raise rather than silently returning something plausible.
 
 What would actually be needed, in order:
 
 1. **A cycler.** Something like a Neware CT-4008 or a Maccor 4300, eight to
    sixty-four channels. The channel count is what sets how many cells can be
-   aged in parallel, and cells have to be aged in parallel because a single
+   aged in parallel and cells have to be aged in parallel because a single
    channel takes months per cell.
 2. **A thermal chamber** per temperature point. The Arrhenius term is the single
    largest driver in the model and it cannot be characterised at one temperature.
@@ -45,7 +45,7 @@ from cobalt.hal.base import BmsSource, CycleTelemetry, NoHardwareError
 _MESSAGE = (
     "SerialBms is not implemented: this repository was built without access to "
     "cells, a cycler or a battery management system. Every result in it comes "
-    "from cobalt.sim. See docs/HARDWARE.md for the rig this needs, and use "
+    "from cobalt.sim. See docs/HARDWARE.md for the rig this needs and use "
     "cobalt.hal.simulated.SimulatedBms in the meantime."
 )
 

@@ -1,7 +1,7 @@
 """Configuration.
 
 One YAML file describes a whole run: the fleet to simulate, the protocols and
-models to evaluate, the window the online task uses, and the commercial
+models to evaluate, the window the online task uses and the commercial
 assumptions the cost models are built on.
 
 Two files ship. ``config/default.yaml`` produces every number in the README.
@@ -142,7 +142,7 @@ def _build(cls: type, payload: dict[str, Any] | None, where: str) -> Any:
 
     kwargs: dict[str, Any] = {}
     for key, value in payload.items():
-        # Tuple-typed fields come out of YAML as lists, and a dataclass that
+        # Tuple-typed fields come out of YAML as lists and a dataclass that
         # advertises a tuple and holds a list compares unequal to itself after a
         # round trip through the manifest. The nesting matters too: the grading
         # cost matrix is a tuple of tuples and YAML gives a list of lists.

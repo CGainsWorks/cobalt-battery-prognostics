@@ -3,7 +3,7 @@
 The last two tests are the important ones. They assert that the hardware-backed
 source raises rather than returning something plausible, which is the difference
 between an honest gap and a silent lie. If somebody implements `SerialBms` they
-will fail, and that is the correct signal.
+will fail and that is the correct signal.
 """
 
 from __future__ import annotations
@@ -145,7 +145,7 @@ def test_the_hardware_source_refuses_to_read():
 
 
 def test_the_hardware_error_is_both_a_missing_feature_and_a_link_failure():
-    """Callers check for either, and both should catch this."""
+    """Callers check for either and both should catch this."""
     assert issubclass(NoHardwareError, NotImplementedError)
     assert issubclass(NoHardwareError, RuntimeError)
 

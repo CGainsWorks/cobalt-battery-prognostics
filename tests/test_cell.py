@@ -167,7 +167,7 @@ def test_scaled_multiplies_rather_than_replaces():
 
 
 def test_knee_multiplier_does_not_overflow_late_in_a_long_run():
-    """knee_sharpness is large, and the exponential either side of it must be safe."""
+    """knee_sharpness is large and the exponential either side of it must be safe."""
     cell = Cell(
         CellParameters(knee_sharpness=400.0),
         DutyCycle(charge_c_rate=5.0, ambient_temperature_c=55.0),

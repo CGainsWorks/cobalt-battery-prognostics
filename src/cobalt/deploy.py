@@ -1,9 +1,9 @@
-"""Fitting the models that actually get shipped, and writing their model card.
+"""Fitting the models that actually get shipped and writing their model card.
 
 The evaluation refits a model per fold to measure it. Deployment fits once, on
-everything, and that is a different object with different provenance. Keeping
+everything and that is a different object with different provenance. Keeping
 the two apart matters: the number quoted for a deployed model must come from
-cross-validation, never from the fit it was trained with, and the easiest way to
+cross-validation, never from the fit it was trained with and the easiest way to
 get that wrong is to let one function do both.
 
 Every artefact written here carries a model card next to it. The card states
@@ -158,7 +158,7 @@ def build_model_card(
     online: DeployedModel,
     summary: dict[str, Any],
 ) -> dict[str, Any]:
-    """Provenance, honest headline numbers, and the limitation stated first."""
+    """Provenance, honest headline numbers and the limitation stated first."""
 
     def headline(task: str, model: str) -> dict[str, Any]:
         protocols = summary["tasks"][task]["protocols"]

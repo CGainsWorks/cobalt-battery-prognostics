@@ -85,7 +85,7 @@ def test_capacity_extrapolation_survives_a_flat_fade_curve():
     features = pd.DataFrame(
         {
             "capacity_cycle_100": [2.10, 2.10, 2.10],
-            # Zero fade, negative fade, and a fade that puts the cell already dead.
+            # Zero fade, negative fade and a fade that puts the cell already dead.
             "capacity_fade_2_to_100": [0.0, -0.05, 1.0],
         }
     )
@@ -126,7 +126,7 @@ def test_coefficients_are_exposed_for_linear_models(linear_problem):
     model = ridge().fit(features, target)
     coefficients = model.coefficients
     assert coefficients is not None
-    # 'a' has twice the influence of 'b', and 'c' has none.
+    # 'a' has twice the influence of 'b' and 'c' has none.
     assert abs(coefficients["a"]) > abs(coefficients["b"]) > abs(coefficients["c"])
 
 

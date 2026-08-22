@@ -1,7 +1,7 @@
 # The rig this needs
 
 `cobalt.hal.serial_bms.SerialBms` raises `NoHardwareError` from every method
-that would touch a device. This page is what it would take to make it work, and
+that would touch a device. This page is what it would take to make it work and
 what would have to be true of the data for the results in this repository to
 mean anything about real cells.
 
@@ -19,7 +19,7 @@ overlooked. This repository's central argument is that holding out whole
 manufacturing lots is a different and harder question than holding out cells.
 With one lot that protocol cannot be run at all. With two, a cross-validated
 version of it does not exist. Three is the bare minimum for a single held-out
-lot with two remaining to fit on, and even then
+lot with two remaining to fit on and even then
 `cobalt.models.conformal.MIN_FIT_GROUPS` says grouped calibration will be
 starved.
 
@@ -36,13 +36,13 @@ whole protocol argument rests on.
 
 **Eight to sixty-four channels**, for example a Neware CT-4008 or a Maccor 4300.
 
-Channel count sets how many cells age in parallel, and cells must age in
+Channel count sets how many cells age in parallel and cells must age in
 parallel because a single channel takes months per cell. Ninety cells at a
 median thousand cycles, at roughly 1.6 hours a cycle, is about 6,000 channel-days
 of testing. On eight channels that is two years. On sixty-four it is three
 months.
 
-This arithmetic is the business case for the early-life model, and it is the one
+This arithmetic is the business case for the early-life model and it is the one
 part of the case that does not depend on the model being accurate. It is
 computed in `cobalt.business.cost.qualification_time_saving`.
 
@@ -50,13 +50,13 @@ Required capabilities:
 
 - Constant-current constant-voltage charge, programmable C-rate.
 - Constant-current discharge to a voltage cut-off.
-- Per-cycle logging of capacity, energy, and the full voltage-against-capacity
+- Per-cycle logging of capacity, energy and the full voltage-against-capacity
   trace at a resolution fine enough to compute `dQ(V)`. Coarse logging makes the
   headline early-life feature unusable, so this is worth checking before
   starting rather than after.
 - Scheduled reference performance tests: a slow full discharge every twenty-five
   cycles at a fixed low C-rate and fixed temperature. This is what makes
-  `discharge_capacity_ah` a measurement rather than an estimate, and it is what
+  `discharge_capacity_ah` a measurement rather than an estimate and it is what
   the early-life features assume they have.
 
 ## 3. Thermal
@@ -67,7 +67,7 @@ Required capabilities:
 The Arrhenius term is the single largest driver in the degradation model and it
 cannot be characterised at one temperature. The plating term needs the cold
 point specifically: it is accelerated at *low* temperature, which is why the
-temperature optimum for a cell is a compromise rather than "colder is better",
+temperature optimum for a cell is a compromise rather than "colder is better"
 and a rig that only tests hot will miss it.
 
 Chamber stability of ±2 °C is adequate. Cell surface thermocouples are needed as
@@ -83,7 +83,7 @@ above that line in this codebase already works, because it is written against
 the interface rather than against the simulator.
 
 The fields that have to come off the link are exactly the ones on
-`CycleTelemetry`, and all of them are on a production battery-management-system
+`CycleTelemetry` and all of them are on a production battery-management-system
 bus already: discharge and charge capacity, internal resistance estimate, mean
 and maximum temperature, both C-rates, charge time, discharge energy and
 cumulative throughput. Nothing on that record requires a laboratory instrument,
@@ -103,14 +103,14 @@ are cheap and each one corresponds to a real failure that is silent otherwise.
    temperature.
 3. **Cut-off consistency.** The measured discharge capacity must fall when the
    discharge C-rate is raised, by an amount consistent with the measured
-   resistance. This is the coupling `Cell.cutoff_state_of_charge` models, and if
+   resistance. This is the coupling `Cell.cutoff_state_of_charge` models and if
    it is absent in the data the resistance channel is not measuring what it
    claims.
 4. **Frame loss.** Run the link for twenty-four hours and count gaps. The
-   telemetry store deduplicates and re-sorts on ingest, but a systematically
+   telemetry store deduplicates and re-sorts on ingest but a systematically
    missing cycle index will silently shorten every window.
 5. **Clock.** Cycle indices from the pack and from the cycler must not drift
-   apart. The online features are indexed by cycle, not by time, and a drifting
+   apart. The online features are indexed by cycle, not by time and a drifting
    index corrupts every slope in the feature set.
 
 ---

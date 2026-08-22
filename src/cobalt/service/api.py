@@ -3,7 +3,7 @@
 Four things a maintenance planner needs and one thing an auditor needs:
 
 * ``POST /v1/packs/{pack_id}/cycles`` take telemetry off the link
-* ``GET  /v1/packs/{pack_id}/health`` state of health, remaining life, and a date
+* ``GET  /v1/packs/{pack_id}/health`` state of health, remaining life and a date
 * ``GET  /v1/fleet/risk`` the whole fleet, soonest first
 * ``DELETE /v1/packs/{pack_id}`` forget a pack
 * ``GET  /v1/model`` the model card, including the fact that it was trained
@@ -11,7 +11,7 @@ Four things a maintenance planner needs and one thing an auditor needs:
 
 The health response leads with ``book_replacement_after_cycles``, not with the
 point estimate. That is the newsvendor quantile from `cobalt.business.cost`,
-approximated by the conformal lower bound, and it is the number the decision
+approximated by the conformal lower bound and it is the number the decision
 actually hangs on. The point estimate is returned too, one field further down,
 because somebody will want it and it should not be the first thing they see.
 """

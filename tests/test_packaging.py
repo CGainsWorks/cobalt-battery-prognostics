@@ -3,16 +3,16 @@
 This file exists because of a real failure. The first commit's `.gitignore`
 contained `data/`, meaning to exclude the generated fleet at the repository
 root. That pattern matches a directory called `data` at *any* depth, so it also
-excluded `src/cobalt/data/` — the schema and the split protocols, the core of
+excluded `src/cobalt/data/`: the schema and the split protocols, the core of
 the repository's argument.
 
 Nothing local noticed. The working tree had the files, the tests passed, the
 Docker image built from the working tree and passed too. Only a fresh clone was
-broken, and the first sign of it was ruff failing to resolve an import on a CI
+broken and the first sign of it was ruff failing to resolve an import on a CI
 runner, which is a long way from the cause.
 
-So: walk the package, import everything, and check the declared entry points
-resolve. Cheap, and it turns a class of silent packaging errors into an
+So: walk the package, import everything and check the declared entry points
+resolve. Cheap and it turns a class of silent packaging errors into an
 immediate failure with the missing module named.
 """
 
@@ -94,7 +94,7 @@ def test_the_gitignore_does_not_exclude_any_source_file() -> None:
 
     Reads the ignore file rather than shelling out to git, so it works inside
     the Docker image where there is no repository. Only the pattern shape is
-    checked: a bare `name/` pattern matches at any depth, and for anything that
+    checked: a bare `name/` pattern matches at any depth and for anything that
     shares a name with a source directory that is a trap.
     """
     from cobalt.config import repository_root

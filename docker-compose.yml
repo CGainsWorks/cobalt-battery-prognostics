@@ -18,7 +18,7 @@ services:
       - ./results:/app/results
       - ./artifacts:/app/artifacts
       # Not the fleet data: it is half a million rows, regenerated in about
-      # seventy seconds, and nothing outside the container wants it.
+      # seventy seconds and nothing outside the container wants it.
     environment:
       MPLBACKEND: Agg
       OMP_NUM_THREADS: "2"

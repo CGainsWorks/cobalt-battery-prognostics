@@ -6,10 +6,10 @@ bill.
 
 > **There is no hardware behind this.** No cycler, no thermal chamber, no cells.
 > Every number on this page comes from a physics-informed simulator in
-> [`src/cobalt/sim`](src/cobalt/sim), and the simulated cells are smoother and
+> [`src/cobalt/sim`](src/cobalt/sim) and the simulated cells are smoother and
 > better behaved than real ones. What that permits and what it forbids is set
 > out in [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md), the model card leads with
-> it, and [`src/cobalt/hal/serial_bms.py`](src/cobalt/hal/serial_bms.py) is the
+> it and [`src/cobalt/hal/serial_bms.py`](src/cobalt/hal/serial_bms.py) is the
 > one class that would need writing if a cycler arrived.
 
 ![Capacity fade for sixty simulated cells, coloured by manufacturing batch](analysis/default/capacity_fade.png)
@@ -23,10 +23,10 @@ below.*
 
 ## The claim this repository is built around
 
-**Battery prognostics results are usually reported on a split that leaks, and
+**Battery prognostics results are usually reported on a split that leaks and
 the leak is worth more than the model.**
 
-There are three ways to hold data back from a fleet of cells, and they answer
+There are three ways to hold data back from a fleet of cells and they answer
 three different questions.
 
 | Split | What it holds out | What it answers |
@@ -116,7 +116,7 @@ bash scripts/run_smoke.sh
 A pallet of cells arrives and somebody has to grade it. Cycling one to end of
 life to find out takes months of a test channel. The alternative is to cycle for
 a hundred cycles and predict the rest, which is the problem Severson et al.
-posed in *Nature Energy* in 2019, and the feature set here is theirs:
+posed in *Nature Energy* in 2019 and the feature set here is theirs:
 the variance of `dQ(V) = Q_100(V) - Q_10(V)`, the capacity fade slope, the
 resistance rise, the thermal history.
 
@@ -146,27 +146,33 @@ a thousand cycles before the capacity fade curve shows anything.*
 | Gradient boosting | 0.952 | 0.764 |
 <!-- END:early_life_alpha -->
 
+![Predicted against true cycle life, with 90% conformal intervals, under both protocols](analysis/default/parity_early_life.png)
+
+*The same model under both protocols. The vertical bars are the 90% intervals.
+On the right the points spread and the bars lengthen, which is the price of a
+lot the model has never met.*
+
 Two things in that table are worth more than the winning number.
 
 **The engineering baseline barely beats doing nothing.** `capacity_extrapolation`
 is what a competent engineer does with a spreadsheet: fit the fade over the
 first hundred cycles, extend the line, read off where it crosses 80%. It scores
 665 against the fleet mean's 678. Over a hundred cycles the fade is nearly flat
-and nearly linear, so the extrapolation is a long lever on a small noisy slope,
+and nearly linear, so the extrapolation is a long lever on a small noisy slope
 and it is blind to the knee entirely. This is the reason the early-life problem
 needed a paper.
 
 **The gap between the two columns is the honest cost of a new lot.** 153 becomes
-246, and 0.95 becomes 0.76. The fold-to-fold standard deviation on the
+246 and 0.95 becomes 0.76. The fold-to-fold standard deviation on the
 batch-independent column is large (±84 cycles for gradient boosting), which is
 itself the finding: with five lots held out per fold, which five you get matters
-enormously, and any single-number claim about a new lot is overconfident.
+enormously and any single-number claim about a new lot is overconfident.
 
 ### Online: when do I book the workshop?
 
 For the rest of the pack's life the question changes. Not "how healthy is it"
 but "when do I need a replacement on the shelf". Each prediction is made from a
-trailing fifty-cycle window of ordinary battery-management-system telemetry, and
+trailing fifty-cycle window of ordinary battery-management-system telemetry and
 nothing in the feature set requires a laboratory reference discharge, because a
 pack in service does not get one.
 
@@ -181,7 +187,7 @@ and imply completely different amounts of spare stock. So every deployed model
 here is wrapped in split conformal prediction and ships an interval.
 
 Which raises the question conformal prediction is usually not asked: **calibrated
-on what?** Calibrate on cells drawn at random from lots the model already knows,
+on what?** Calibrate on cells drawn at random from lots the model already knows
 and the residuals are smaller than they will be on a new lot, so the interval
 comes out too narrow and the coverage it advertises is not the coverage it
 delivers.
@@ -203,9 +209,9 @@ protocol splits on random rows, random calibration is the matched choice and the
 two agree exactly, as they must.
 
 An interval that is too wide is visibly cautious. One that undercovers is
-invisibly wrong, and it is the one you get by default.
+invisibly wrong and it is the one you get by default.
 
-Grouped calibration is not free, and the repository says where it stops paying:
+Grouped calibration is not free and the repository says where it stops paying:
 it removes whole groups from the fit, so below about four remaining groups the
 model loses more from the missing variety than the calibration gains. That
 threshold is a named constant with a test behind it, not a footnote.
@@ -215,7 +221,7 @@ threshold is a named constant with a test behind it, not a footnote.
 ## What the errors cost
 
 An RMSE improvement that does not change a decision is worth nothing. Both
-models here feed a specific decision with a specific asymmetric cost, and both
+models here feed a specific decision with a specific asymmetric cost and both
 decisions have a right answer that is not the point estimate.
 
 ![Cost per cell and cost per pack under each decision rule and each protocol](analysis/default/cost.png)
@@ -232,7 +238,7 @@ distribution, at
 
 Not the mean. Not the median. The **fifteenth percentile**, which says the
 booking should sit well below the model's central estimate. This is the
-newsvendor problem, and a fleet scheduling on the point estimate is answering a
+newsvendor problem and a fleet scheduling on the point estimate is answering a
 question nobody asked.
 
 <!-- BEGIN:replacement -->
@@ -266,7 +272,7 @@ factor of two and a half.
 
 Grade A, B or C by predicted cycle life. Undergrading a good cell loses the
 margin between two price bands, tens of pounds. Overgrading a poor one puts a
-cell that will not last into an application that assumed it would, and that bill
+cell that will not last into an application that assumed it would and that bill
 arrives as a field replacement with labour attached. The cost matrix is in
 [`config/default.yaml`](config/default.yaml).
 
@@ -285,7 +291,7 @@ overgrading and then overshoots, because undergrading is not free either: at a
 90% bound almost everything falls into C and the lost margin outweighs the
 failures prevented. The rule the cost matrix actually implies is an expectation:
 integrate the probability of each true grade over the predictive distribution
-and take the assignment with the lowest expected cost. That is the fourth row,
+and take the assignment with the lowest expected cost. That is the fourth row
 and it beats both.
 
 ### Test time
@@ -299,7 +305,7 @@ Grading at a hundred cycles instead of cycling to end of life:
 | Early-life test | 6.7 channel-days |
 | **Saved** | **92.2%** |
 
-Cycler channels are the constrained resource in every battery laboratory, and
+Cycler channels are the constrained resource in every battery laboratory and
 this part of the business case does not depend on the model being good, only on
 it being usable.
 
@@ -321,16 +327,16 @@ it being usable.
 The simulator is a lumped empirical model with the four mechanisms that dominate
 the published ageing literature: square-root-of-time SEI growth with an
 Arrhenius temperature term, throughput-driven lithium plating worsened by high
-charge rate and by low temperature, a knee where the two interact, and
+charge rate and by low temperature, a knee where the two interact and
 resistance rise that brings the discharge cut-off forward as the cell ages. Fade
 curves, knee behaviour and Arrhenius sensitivity come out roughly the right
 shape and magnitude. **No parameter in it was fitted to laboratory data, because
 there was no laboratory.**
 
-Cells are drawn in batches, and a batch shares a coating run and a deployment
+Cells are drawn in batches and a batch shares a coating run and a deployment
 site. Between-batch spread is several times within-batch spread, which is what
 makes the batch-independent protocol a genuinely harder question rather than a
-formality, and there is a test asserting that it stays that way.
+formality and there is a test asserting that it stays that way.
 
 ---
 
@@ -340,10 +346,10 @@ formality, and there is a test asserting that it stays that way.
 src/cobalt/
   sim/          cell degradation model and fleet generator (the stand-in for a lab)
   hal/          BmsSource interface: SimulatedBms works, SerialBms is the honest gap
-  data/         on-disk schema, and the three split protocols
-  features/     early-life dQ(V) features, and online window features
+  data/         on-disk schema and the three split protocols
+  features/     early-life dQ(V) features and online window features
   models/       baselines, regressors, split conformal with grouped calibration
-  evaluate/     the protocol loop, metrics, figures, and the README's tables
+  evaluate/     the protocol loop, metrics, figures and the README's tables
   business/     newsvendor scheduling and Bayes-optimal lot grading
   service/      FastAPI: ingest telemetry, get a booking, rank the fleet
   deploy.py     fit the shipped models, write the model card
@@ -357,12 +363,12 @@ make serve
 ```
 
 `POST /v1/packs/{id}/cycles` takes telemetry. `GET /v1/packs/{id}/health`
-returns a booking, and it leads with `book_replacement_after_cycles` rather than
+returns a booking and it leads with `book_replacement_after_cycles` rather than
 with the point estimate, because that is the field the decision hangs on.
 `GET /v1/fleet/risk` ranks the fleet soonest-first. `GET /v1/model` returns the
 model card, whose first field says the training data was simulated.
 
-There is one feature-extraction function, used by training and by serving alike,
+There is one feature-extraction function, used by training and by serving alike
 and a test asserts the service and the library return the same number for the
 same window. Training-serving skew is not a risk this codebase takes.
 
@@ -397,10 +403,17 @@ all.
 
 No number in this README is typed by hand. Every table between a pair of
 `BEGIN`/`END` markers is rendered from
-[`results/default/summary.json`](results/default/summary.json), and
+[`results/default/summary.json`](results/default/summary.json) and
 `make check` regenerates them and fails if the file has drifted. Continuous
 integration runs that check on every push, so a stale table is a red build
 rather than a quiet lie.
+
+Reruns are byte-identical. `cobalt evaluate` on the same config twice produces
+the same `summary.json` down to the byte, because every stochastic step draws
+from a generator seeded from the config and cells get their own spawned seed
+stream. Adding a batch to the end of a fleet does not disturb any cell before
+it, which is what lets the CI fleet be a genuine prefix of the full one rather
+than a different fleet with the same name.
 
 The full report, with fold standard deviations and confusion matrices, is
 [`analysis/default/EVALUATION.md`](analysis/default/EVALUATION.md).
@@ -420,14 +433,14 @@ The short version:
   A simulator cannot reproduce the motivation for a feature it has designed
   away.
 - **The methodological results are the transferable part.** That a random split
-  leaks, that grouped calibration is required for honest intervals, and that the
+  leaks, that grouped calibration is required for honest intervals and that the
   cost-optimal decision is a quantile rather than a point estimate are
   properties of the evaluation and the decision theory, not of the chemistry.
 - **The cost figures are illustrative.** They are configuration, sized for a
   small commercial pack. They set the shape of the answer, not its truth.
 - **The conformal interval is turned into a full predictive distribution by
   assuming Gaussian residuals in log space.** That assumption is wrong in the
-  tails. A conformalised quantile regressor would remove it, and is the obvious
+  tails. A conformalised quantile regressor would remove it and is the obvious
   next piece of work.
 
 ---

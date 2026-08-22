@@ -74,7 +74,7 @@ jobs:
       # config instead. This job proves that simulation, feature extraction,
       # every split protocol, every model, conformal calibration, both cost
       # models, the figures, the model card and the hardware interface all
-      # connect. It proves nothing about accuracy, and scripts/run_smoke.sh says
+      # connect. It proves nothing about accuracy and scripts/run_smoke.sh says
       # so on every run.
       - name: Whole pipeline on a small fleet
         run: bash scripts/run_smoke.sh

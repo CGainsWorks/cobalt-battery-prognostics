@@ -1,7 +1,7 @@
 """One place that knows which models exist and which task each one fits.
 
 Kept separate so the evaluation loop, the command line and the service all name
-models the same way, and so an unknown name fails at the point somebody typed it
+models the same way and so an unknown name fails at the point somebody typed it
 rather than three stages later.
 """
 

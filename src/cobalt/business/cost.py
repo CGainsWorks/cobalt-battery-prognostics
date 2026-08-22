@@ -1,7 +1,7 @@
 """Maintenance scheduling: when do you book the replacement?
 
 The online model predicts remaining useful life. The decision it feeds is a
-date in a workshop diary, and the cost of that decision is asymmetric in a way
+date in a workshop diary and the cost of that decision is asymmetric in a way
 that has a closed-form answer nobody uses.
 
 Book the replacement too late and the pack runs past end of life: derated
@@ -18,11 +18,11 @@ the quantile of the predictive distribution at
 
 With the defaults here that is around the fifteenth percentile, which says the
 booking should sit well below the model's central estimate. This is the
-newsvendor problem, and a fleet that schedules on the point estimate is
+newsvendor problem and a fleet that schedules on the point estimate is
 answering a question nobody asked.
 
 That is why the conformal interval is not decoration. The lower bound is an
-approximation to the quantile the cost function actually wants, and the
+approximation to the quantile the cost function actually wants and the
 comparison between the two policies is the clearest single number in the
 repository: same model, same predictions, different reading of them, materially
 different bill.
@@ -55,7 +55,7 @@ class ReplacementCostModel:
     #: Pounds per cycle the pack runs beyond end of life.
     cost_per_cycle_late: float = 14.00
     #: Fixed cost of the replacement itself. Identical under every policy, so it
-    #: cancels in comparisons, and it is here to keep the absolute figures honest.
+    #: cancels in comparisons and it is here to keep the absolute figures honest.
     fixed_replacement_cost: float = 0.0
 
     def __post_init__(self) -> None:
@@ -154,7 +154,7 @@ def compare_policies(
 
         # The policy the cost function actually asks for. The 90% lower bound is
         # a fixed level chosen for readability; the newsvendor quantile is
-        # derived from the two costs, and with these figures it sits well above
+        # derived from the two costs and with these figures it sits well above
         # the bound. Booking on the bound is cautious in the right direction and
         # still the wrong amount.
         half_width = float(
@@ -193,7 +193,7 @@ def qualification_time_saving(
 
     This is the part of the business case that does not depend on the model being
     good, only on it being usable: the alternative to a hundred-cycle test is a
-    test that runs until the cell dies, and cycler channels are the constrained
+    test that runs until the cell dies and cycler channels are the constrained
     resource in every battery laboratory.
     """
     if observation_cycles <= 0 or median_cycle_life <= 0 or hours_per_cycle <= 0:

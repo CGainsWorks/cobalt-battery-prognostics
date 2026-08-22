@@ -1,6 +1,6 @@
 """Features from the first hundred cycles of a cell's life.
 
-The commercial question this answers: a lot of cells arrives, and somebody has
+The commercial question this answers: a lot of cells arrives and somebody has
 to decide what it is worth. Cycling a cell to end of life to find out takes
 months of a test channel's time. Predicting from the first hundred cycles takes
 a few days.
@@ -8,7 +8,7 @@ a few days.
 The feature set is the one from Severson et al., *Data-driven prediction of
 battery cycle life before capacity degradation* (Nature Energy, 2019), which
 found that the *variance* of the difference between two early discharge curves
-carries almost all of the signal, and that it does so long before the capacity
+carries almost all of the signal and that it does so long before the capacity
 fade curve shows anything at all. Reimplemented here against simulated cells,
 not against their data.
 
@@ -21,15 +21,15 @@ the difference in discharged capacity at matched terminal voltage between cycle
 feature in the original paper, because it picks up the resistance rise and the
 shape change that a scalar capacity measurement averages away.
 
-**It is not the strongest feature here, and that is a finding about the
+**It is not the strongest feature here and that is a finding about the
 simulator rather than about batteries.** Fitted on this data the elastic net
-leans on ``log_abs_fade_slope`` and ``charge_time_drift`` instead, and gives
+leans on ``log_abs_fade_slope`` and ``charge_time_drift`` instead and gives
 delta-Q a small coefficient. The reason is that the simulated capacity fade is
 far smoother than a real cell's: the plain slope over a hundred cycles is a
 clean, low-noise estimate here, whereas on real hardware it is buried in
 measurement noise and cell-to-cell scatter, which is precisely the condition
 that makes delta-Q worth the trouble. A simulator cannot reproduce the
-motivation for a feature it has designed away, and `docs/LIMITATIONS.md` records
+motivation for a feature it has designed away and `docs/LIMITATIONS.md` records
 this as one of the specific things real cells would change.
 """
 
@@ -167,7 +167,7 @@ def build_table(dataset: FleetDataset) -> tuple[pd.DataFrame, dict[str, int]]:
 
     Returns the table and a count of what was excluded and why. Cells that reach
     end of life inside the observation window cannot be predicted from that
-    window, and cells that were still alive at the cycle ceiling have no label.
+    window and cells that were still alive at the cycle ceiling have no label.
     """
     rows: list[dict[str, object]] = []
     excluded = {"died_within_window": 0, "censored": 0, "missing_curves": 0}

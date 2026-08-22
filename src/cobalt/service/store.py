@@ -3,11 +3,11 @@
 In memory, in a dictionary, behind a lock. That is the correct amount of
 engineering for this repository and it is a deliberate choice rather than a
 missing feature: swapping it for a time-series database is a real decision with
-real operational consequences, and making it here on no evidence would be
+real operational consequences and making it here on no evidence would be
 guessing.
 
 What it does do is bound itself. A pack that streams for a year is a hundred
-thousand records, and the online model only ever looks at a trailing window, so
+thousand records and the online model only ever looks at a trailing window, so
 the store keeps a ring of the most recent cycles and drops the rest. An
 unbounded list in a long-running service is a slow leak that looks fine in
 testing and falls over in the third week.

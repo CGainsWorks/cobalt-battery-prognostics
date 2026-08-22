@@ -1,7 +1,7 @@
 # The whole repository in a container, not just the code.
 #
 # Carrying only src/ is the tempting version and it breaks: the tests check the
-# README against the committed results, the config files drive every command, and
+# README against the committed results, the config files drive every command and
 # the analysis output has to land somewhere a volume can pick it up. So the image
 # holds the repository.
 

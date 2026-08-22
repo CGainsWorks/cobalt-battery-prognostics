@@ -5,14 +5,14 @@ of magnitude across a fleet and a squared error in linear cycles would let the
 long-lived cells set the whole objective. Everything is *reported* in both
 spaces, because a maintenance planner does not think in decades.
 
-Four families of number, and they disagree with each other often enough to be
+Four families of number and they disagree with each other often enough to be
 worth keeping all four:
 
 * **Error size.** RMSE and MAE, in log space and in cycles.
-* **Relative error.** MAPE, and the alpha-lambda accuracy the prognostics
+* **Relative error.** MAPE and the alpha-lambda accuracy the prognostics
   literature uses: the share of predictions landing inside a tolerance band
   around the truth.
-* **Ranking.** Spearman correlation. Triage is a sorting problem, and a model
+* **Ranking.** Spearman correlation. Triage is a sorting problem and a model
   can rank a fleet correctly while being biased on every single cell.
 * **Interval quality.** Coverage against the width it cost.
 """
@@ -47,7 +47,7 @@ def regression_metrics(log_truth: np.ndarray, log_prediction: np.ndarray) -> dic
     relative = np.abs(cycle_residual) / np.maximum(truth_cycles, 1.0)
 
     # Spearman is undefined when either side is constant. The prediction side is
-    # exactly what the fleet_mean baseline produces, and the truth side turns up
+    # exactly what the fleet_mean baseline produces and the truth side turns up
     # on a fold where every held-out cell happens to share a label. Report zero
     # rather than a NaN that then propagates into every aggregate in the table.
     constant = np.allclose(log_prediction, log_prediction[0]) or np.allclose(
@@ -81,7 +81,7 @@ def interval_metrics(
 
     ``coverage_gap`` is the number that matters. A negative value means the
     interval promised more than it delivered, which is worse than a wide
-    interval: a wide interval is visibly cautious, and an undercovering one is
+    interval: a wide interval is visibly cautious and an undercovering one is
     invisibly wrong.
     """
     log_truth = np.asarray(log_truth, dtype=float)
@@ -107,7 +107,7 @@ def interval_metrics(
 def aggregate(fold_metrics: list[dict[str, float]]) -> dict[str, float]:
     """Mean and standard deviation across folds.
 
-    Weighted by nothing: each fold is one observation of the protocol, and a
+    Weighted by nothing: each fold is one observation of the protocol and a
     fold with more test cells is not a more reliable estimate of the *protocol's*
     behaviour, only of that fold's. The standard deviation is reported alongside
     because on the harder protocols it is large enough to matter.

@@ -34,7 +34,7 @@ echo "==> simulating a small fleet"
 warn
 echo "==> evaluating, pricing, plotting and fitting"
 # Deliberately no --update-readme. The README's numbers come from the default
-# config, and letting a smoke run overwrite them would be the exact failure the
+# config and letting a smoke run overwrite them would be the exact failure the
 # README check exists to catch.
 "$PYTHON" -m cobalt.cli evaluate --config "$CONFIG"
 

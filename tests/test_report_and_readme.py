@@ -1,4 +1,4 @@
-"""Reporting, and the check that keeps the README honest.
+"""Reporting and the check that keeps the README honest.
 
 The last two tests are the ones that matter to a reader. One asserts the
 committed results exist and the README's tables were generated from them. The
@@ -79,7 +79,7 @@ def test_the_readme_leads_with_the_batch_independent_number(committed_summary):
     """The honest column must not be buried to the right of a flattering one.
 
     Checked structurally rather than by eye: the batch-independent column has to
-    exist in the headline tables, and the hardest protocol has to be the last
+    exist in the headline tables and the hardest protocol has to be the last
     column, which is where a reader's eye lands after the comparison.
     """
     text = (repository_root() / "README.md").read_text(encoding="utf-8")

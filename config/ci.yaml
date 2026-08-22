@@ -3,10 +3,10 @@
 # This proves that simulation, feature extraction, every split protocol, every
 # model, conformal calibration, both cost models, the figures and the service
 # all connect. It proves nothing whatsoever about accuracy: eight batches of six
-# cells is far too few to estimate a batch-independent error, and the fold
+# cells is far too few to estimate a batch-independent error and the fold
 # standard deviations it prints will be enormous.
 #
-# scripts/run_smoke.sh says so on every run, and the results it writes are
+# scripts/run_smoke.sh says so on every run and the results it writes are
 # stamped with this config name so they cannot be mistaken for the real ones.
 
 name: ci

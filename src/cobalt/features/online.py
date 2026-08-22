@@ -1,12 +1,12 @@
 """Features for the online task: how many cycles has this pack got left?
 
 The early-life task grades a lot before it ships. This one runs for the rest of
-the pack's life, on whatever the battery management system happened to log, and
+the pack's life, on whatever the battery management system happened to log and
 answers the question a maintenance planner asks: not "how healthy is it" but
 "when do I have to have a replacement on the shelf".
 
 Each row is a trailing window of ``WINDOW_CYCLES`` cycles ending at some cycle
-``t``, and the label is the remaining useful life, ``cycle_life - t``. Windows
+``t`` and the label is the remaining useful life, ``cycle_life - t``. Windows
 are taken every ``STRIDE`` cycles rather than every cycle, because consecutive
 windows overlap by all but one sample and a hundred near-duplicate rows per cell
 buys nothing but confidence in a number that is not real.
@@ -64,7 +64,7 @@ def window_features(window: pd.DataFrame, rated_capacity_ah: float) -> dict[str,
 
     Note what is *not* here: the discharge capacity of a full reference
     discharge. A pack in service rarely gets one, so the state of health this
-    uses is the one the management system estimates from partial discharges,
+    uses is the one the management system estimates from partial discharges
     and every feature below is something a CAN bus already carries.
     """
     cycle = window["cycle"].to_numpy(dtype=float)
@@ -110,7 +110,7 @@ def build_table(
     """Feature table for the online task, many rows per cell.
 
     Rows carry ``cell_id`` and ``batch_id`` so the grouped protocols in
-    `cobalt.data.splits` have something to group on, and ``cycle`` so a
+    `cobalt.data.splits` have something to group on and ``cycle`` so a
     prediction can be traced back to the window it came from.
     """
     rows: list[dict[str, object]] = []

@@ -1,19 +1,19 @@
 """The baselines a learned model has to beat to be worth deploying.
 
-Two of them, and they are not straw men.
+Two of them and they are not straw men.
 
 ``capacity_extrapolation``
     What a competent engineer does with a spreadsheet: fit the observed capacity
     fade, extend the line, read off where it crosses the end-of-life threshold.
     It needs no training data at all, which is a real advantage when a new
-    chemistry arrives. It fails for a specific and interesting reason, and the
+    chemistry arrives. It fails for a specific and interesting reason and the
     failure is the argument for the whole repository: fade over the first hundred
     cycles is nearly linear and nearly flat, so the extrapolation is a long lever
-    on a small, noisy slope, and it is blind to the knee entirely.
+    on a small, noisy slope and it is blind to the knee entirely.
 
 ``fleet_mean``
     Predict the training mean and ignore the features. Any model that cannot
-    beat this has learned nothing, and on the harder protocols that is a live
+    beat this has learned nothing and on the harder protocols that is a live
     possibility rather than a formality.
 
 Both implement the same two-method interface as the learned models, so the
@@ -49,7 +49,7 @@ class CapacityExtrapolation:
     Fitting happens only to pick up the fleet's median cycle life, which is used
     as the fallback when the observed slope is non-negative. A cell whose
     capacity has not measurably fallen in a hundred cycles gives a slope of
-    roughly zero, and dividing by it produces an infinite life rather than an
+    roughly zero and dividing by it produces an infinite life rather than an
     error, which is precisely the sort of thing that reaches production.
     """
 
@@ -77,7 +77,7 @@ class CapacityExtrapolation:
     def fit(self, features: pd.DataFrame, target: np.ndarray) -> CapacityExtrapolation:
         self._fallback_log_life = float(np.median(target))
         # A planning horizon. Extrapolating a slope measured over ninety-eight
-        # cycles out to twenty thousand is arithmetic, not a prediction, and
+        # cycles out to twenty thousand is arithmetic, not a prediction and
         # letting it through would flatter every other model in the table by
         # comparison. A real engineer would say "beyond the horizon" and stop, so
         # the baseline does too.
@@ -107,16 +107,16 @@ class CapacityExtrapolation:
 class SlopeExtrapolation:
     """The online-task equivalent: extend the recent fade slope to the threshold.
 
-    Same idea and the same weakness, but with a better vantage point, because by
+    Same idea and the same weakness but with a better vantage point, because by
     mid-life the slope is large enough to measure. It is a genuinely strong
-    baseline late in a pack's life and a poor one early, and the evaluation
+    baseline late in a pack's life and a poor one early and the evaluation
     reports the two separately for exactly that reason.
     """
 
     name = "slope_extrapolation"
     supports_uncertainty = False
 
-    #: Same planning horizon as the early-life extrapolation, and for the same
+    #: Same planning horizon as the early-life extrapolation and for the same
     #: reason: early in life the fade slope is barely distinguishable from zero
     #: and dividing by it produces a number with no information in it.
     HORIZON_MARGIN_DEX = 0.1

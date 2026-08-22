@@ -5,7 +5,7 @@ a protocol added without a label, a model that fits but cannot be serialised. It
 runs the same functions the command line runs, in the same order.
 
 Marked slow because it simulates a fleet. It still finishes in well under a
-minute, and continuous integration runs the whole suite rather than a subset.
+minute and continuous integration runs the whole suite rather than a subset.
 """
 
 from __future__ import annotations
@@ -28,7 +28,7 @@ pytestmark = pytest.mark.slow
 
 @pytest.fixture(scope="module")
 def evaluated(request):
-    """Run both tasks through every protocol once, and reuse the result."""
+    """Run both tasks through every protocol once and reuse the result."""
     dataset = request.getfixturevalue("tiny_dataset")
     config = request.getfixturevalue("tiny_config")
     tables = build_feature_tables(dataset, config)
@@ -88,7 +88,7 @@ def test_the_summary_holds_both_cost_analyses(evaluated):
 
 
 def test_a_model_beats_the_do_nothing_baseline_on_cost(evaluated):
-    """A weak claim on a tiny fleet, but if it fails the wiring is wrong."""
+    """A weak claim on a tiny fleet but if it fails the wiring is wrong."""
     *_, summary = evaluated
     grading = summary["business"]["grading"]["batch_independent"]
     assert (
@@ -204,7 +204,7 @@ def test_a_deployed_model_not_in_the_evaluated_set_is_rejected(evaluated):
 
 
 def test_grouped_calibration_warns_when_there_are_too_few_groups(evaluated):
-    """A real trap, found by this test, and now a stated precondition.
+    """A real trap, found by this test and now a stated precondition.
 
     Grouped calibration takes whole groups out of the fit. On the four-batch
     fleet this suite uses, a two-fold batch split leaves two training batches

@@ -1,9 +1,9 @@
 """The learned models.
 
 Three, deliberately small. The dataset here is a few hundred cells and a few
-thousand windows, the features are hand-built and physically motivated, and
+thousand windows, the features are hand-built and physically motivated and
 nothing about that shape calls for a deep network. A linear model on good
-features is the right first answer, and the original Severson result was an
+features is the right first answer and the original Severson result was an
 elastic net, so matching it is also the honest comparison.
 
 Every model takes a feature frame rather than an array, so a column can be
@@ -25,7 +25,7 @@ class FrameRegressor:
 
     The column order is captured at fit time and enforced at predict time. That
     check has caught a real bug in this repository already: the online feature
-    builder emits its columns in dictionary order, and a later edit that added a
+    builder emits its columns in dictionary order and a later edit that added a
     feature in the middle silently reordered the matrix for anything that had
     already been fitted.
     """

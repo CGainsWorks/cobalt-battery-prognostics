@@ -1,11 +1,11 @@
 """A simulated pack presented as if it were a live battery management system.
 
 This is what stands in for hardware. It runs the same :class:`~cobalt.sim.cell.Cell`
-the training fleet was built from, one cycle at a time, and emits telemetry
+the training fleet was built from, one cycle at a time and emits telemetry
 through the same interface a serial link would.
 
 It is the honest kind of stand-in: the model on the other side of the interface
-cannot tell the difference, which is the whole purpose, but that says nothing
+cannot tell the difference, which is the whole purpose but that says nothing
 about whether the model would work on a real cell. It says the plumbing works.
 """
 

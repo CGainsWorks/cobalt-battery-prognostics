@@ -1,6 +1,6 @@
 # Evaluation protocol
 
-The rules every number in this repository is produced under, and the reasoning
+The rules every number in this repository is produced under and the reasoning
 behind each one. If a result here is ever quoted somewhere else, this is the
 page that says what it means.
 
@@ -15,7 +15,7 @@ Shuffle every cell-cycle row and cut. Available for the online task only.
 Cycle 604 of a cell can be in training while cycle 629 of the same cell is in
 test. With a fifty-cycle window and a twenty-five-cycle stride, those two rows
 share half their samples, come from the same cell, the same coating run and the
-same depot, and have labels twenty-five cycles apart. The model is not
+same depot and have labels twenty-five cycles apart. The model is not
 generalising, it is interpolating between neighbours it has already seen.
 
 This protocol is in the repository for one reason: so the size of the leak is
@@ -40,7 +40,7 @@ history, what do I expect from it".
 Hold out whole manufacturing batches.
 
 This is the arrival of a new lot at a new site, which is the situation a fleet
-operator is actually in, and the only protocol under which the model has to have
+operator is actually in and the only protocol under which the model has to have
 learned something about degradation rather than about bookkeeping.
 
 It is also the protocol with the largest fold-to-fold variance, because with
@@ -52,17 +52,17 @@ result, not noise to be smoothed away.
 
 ## 2. Why batches are not an abstraction
 
-The generator in `cobalt.sim.fleet` builds correlation in at two levels, and it
+The generator in `cobalt.sim.fleet` builds correlation in at two levels and it
 does so deliberately.
 
 **Lot characteristics.** Each batch draws multipliers on the SEI rate, the
 plating rate, the knee onset and the delivered capacity, from lognormals with
 between-batch sigmas of 0.20, 0.26, 0.11 and 0.013. Cells then jitter around
-their batch with sigmas of 0.055, 0.070, 0.030 and 0.006 — roughly a quarter of
+their batch with sigmas of 0.055, 0.070, 0.030 and 0.006, roughly a quarter of
 the between-batch spread.
 
 **Deployment site.** Each batch also draws a mean ambient temperature and a
-charge C-rate, and cells jitter around those. A lot shipped to a hot depot on
+charge C-rate and cells jitter around those. A lot shipped to a hot depot on
 4C fast charge ages nothing like the same lot shipped somewhere temperate on
 0.5C.
 
@@ -82,7 +82,7 @@ Every one of these is enforced in code, not by convention.
    pooled out-of-fold predictions are a complete leave-one-group-out prediction
    for the whole dataset. `evaluate_model` raises if any row was never tested.
 2. **Every split is checked against its own claim.** `assert_no_leakage` runs
-   before any model is fitted on any fold, and re-derives the grouping from the
+   before any model is fitted on any fold and re-derives the grouping from the
    frame rather than trusting the split's label.
 3. **A split with overlapping train and test indices cannot be constructed.**
    `Split.__post_init__` rejects it.
@@ -95,10 +95,10 @@ Every one of these is enforced in code, not by convention.
    `FEATURE_NAMES` tuple.
 6. **Model refits happen inside the fold.** A fresh model is built per fold from
    the registry. The deployed model is fitted separately, on everything, in
-   `cobalt.deploy`, and its quoted numbers come from cross-validation rather than
+   `cobalt.deploy` and its quoted numbers come from cross-validation rather than
    from that fit.
 7. **Conformal calibration happens inside the training fold**, on data the base
-   model was not fitted on, and grouped by the same column the protocol splits
+   model was not fitted on and grouped by the same column the protocol splits
    on.
 
 ---
@@ -109,7 +109,7 @@ Split conformal prediction assumes exchangeability between the calibration set
 and the test set. That assumption is exactly what a batch-independent protocol
 violates if you calibrate the ordinary way.
 
-Calibrate on rows drawn at random from the training lots, and the residuals
+Calibrate on rows drawn at random from the training lots and the residuals
 measure how well the model does on lots it already knows. Test on a new lot and
 the residuals are larger, so the interval is too narrow and the coverage it
 advertises is not the coverage it delivers. On the online task the effect is a
@@ -130,12 +130,12 @@ held-out-lot calibration lands in.
 Grouped calibration is not free: it removes whole groups from the fit, not just
 rows. When there are few groups to begin with, the model loses more from the
 missing between-group variety than the calibration gains from being out of
-group, and a grouped-calibrated model can cover *worse* than a randomly
+group and a grouped-calibrated model can cover *worse* than a randomly
 calibrated one.
 
 That is not a counter-example to the argument above, it is a different effect
 with the same sign. `MIN_FIT_GROUPS = 4` in `cobalt.models.conformal` marks the
-line, and a configuration that crosses it sets `group_warning` rather than
+line and a configuration that crosses it sets `group_warning` rather than
 reporting the result silently. Both shipped configs clear it: `default.yaml`
 leaves eleven lots in the fit, `ci.yaml` leaves four.
 
@@ -145,7 +145,7 @@ evidence against grouping.
 
 ---
 
-## 5. What is reported, and why four families of metric
+## 5. What is reported and why four families of metric
 
 Cycle life spans roughly an order of magnitude across a fleet, so everything is
 fitted in `log10` cycles. A squared error in linear cycles would let the
@@ -153,9 +153,9 @@ long-lived cells set the whole objective. Everything is reported in both spaces,
 because a maintenance planner does not think in decades.
 
 - **Error size**: RMSE and MAE, in log space and in cycles.
-- **Relative error**: MAPE, and the alpha-lambda accuracy the prognostics
-  literature uses — the share of predictions inside a ±20% band around the truth.
-- **Ranking**: Spearman correlation. Triage is a sorting problem, and a model can
+- **Relative error**: MAPE and the alpha-lambda accuracy the prognostics
+  literature uses: the share of predictions inside a ±20% band around the truth.
+- **Ranking**: Spearman correlation. Triage is a sorting problem and a model can
   rank a fleet correctly while being biased on every single cell.
 - **Interval quality**: coverage against the width it cost. Coverage without
   width is free.
