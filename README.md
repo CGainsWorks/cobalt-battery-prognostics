@@ -1,5 +1,9 @@
 # cobalt-battery-prognostics
 
+[![CI](https://github.com/CGainsWorks/cobalt-battery-prognostics/actions/workflows/ci.yml/badge.svg)](https://github.com/CGainsWorks/cobalt-battery-prognostics/actions/workflows/ci.yml)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue.svg)](pyproject.toml)
+[![Licence: MIT](https://img.shields.io/badge/licence-MIT-green.svg)](LICENSE)
+
 Predicting how long a lithium-ion pack has left, on a leakage-free evaluation
 protocol, with a decision layer that turns the prediction into a booking and a
 bill.
@@ -396,7 +400,7 @@ all.
 | `make demo` | everything, end to end, from nothing |
 | `make smoke` | the same pipeline on a small fleet, about two minutes |
 | `make test` | the test suite |
-| `make lint` | ruff |
+| `make lint` | ruff check and format, over src, tests and scripts |
 | `make check` | assert the README's tables match the committed results |
 | `make serve` | the fleet service |
 | `docker compose up` | `make demo` in a container |
