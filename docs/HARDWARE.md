@@ -1,9 +1,16 @@
 # The rig this needs
 
-`cobalt.hal.serial_bms.SerialBms` raises `NoHardwareError` from every method
-that would touch a device. This page is what it would take to make it work and
-what would have to be true of the data for the results in this repository to
-mean anything about real cells.
+The battery link is implemented over CAN: `cobalt.hal.can_bms.CanBms` decodes
+the frames in [`src/cobalt/hal/cobalt_bms.dbc`](../src/cobalt/hal/cobalt_bms.dbc)
+with cantools and assembles them into `CycleTelemetry`. Everything it has been
+run against is simulated: a simulated BMS node
+(`cobalt.hal.can_node.SimulatedBmsNode`) on python-can's in-process virtual bus
+in every test, and the same node as a separate process on a Linux `vcan0`
+interface in continuous integration when the runner can load the module.
+
+This page is what it would take to run it against a real pack and what would
+have to be true of the data for the results in this repository to mean anything
+about real cells. Section 4 says what is left on the link side.
 
 It is deliberately specific. A limitation with a shape is a plan; a limitation
 without one is an excuse.
@@ -76,11 +83,29 @@ kelvin and the model's `thermal_resistance_k_per_w` is currently a guess.
 
 ## 4. The link
 
-**CAN via `python-can` and a DBC file, or Modbus RTU over RS-485.**
+**Done in code, simulated at both ends. Needs a CAN adapter and a real BMS.**
 
-`SerialBms.read_cycle` is where frames become a `CycleTelemetry`. Everything
-above that line in this codebase already works, because it is written against
-the interface rather than against the simulator.
+`CanBms` takes any python-can interface and channel, so a PCAN, Kvaser or
+SocketCAN adapter is a constructor argument rather than new code:
+
+```python
+CanBms(pack_id="PACK-1", interface="socketcan", channel="can0", bitrate=500_000)
+```
+
+What remains is the part no simulator can do:
+
+- **The DBC has to be the BMS vendor's, not this repository's.** The frames in
+  `cobalt_bms.dbc` are designed here: three live frames and five cycle summary
+  frames carrying exactly the fields of `CycleTelemetry`. A production BMS will
+  carry most of these under its own IDs and scalings and will usually not carry
+  a per-cycle summary at all, in which case the summary has to be integrated
+  from the live current and voltage on the receiving side. That integration is
+  not written.
+- **The checksum is this repository's simple ones-complement sum**, not the
+  vendor's scheme (often AUTOSAR E2E). `can_protocol.checksum` is the one
+  function to replace.
+- **Bit timing, termination and bus load** have never been exercised. The
+  virtual and vcan buses have no physical layer.
 
 The fields that have to come off the link are exactly the ones on
 `CycleTelemetry` and all of them are on a production battery-management-system
@@ -108,7 +133,9 @@ are cheap and each one corresponds to a real failure that is silent otherwise.
    claims.
 4. **Frame loss.** Run the link for twenty-four hours and count gaps. The
    telemetry store deduplicates and re-sorts on ingest but a systematically
-   missing cycle index will silently shorten every window.
+   missing cycle index will silently shorten every window. `CanBms.stats`
+   already counts rolling-counter gaps, checksum failures and cycles dropped for
+   an incomplete summary, and a test drops a frame on purpose to prove it.
 5. **Clock.** Cycle indices from the pack and from the cycler must not drift
    apart. The online features are indexed by cycle, not by time and a drifting
    index corrupts every slope in the feature set.
@@ -120,7 +147,3 @@ are cheap and each one corresponds to a real failure that is silent otherwise.
 The features, the split protocols, the models, the conformal calibration, the
 cost models, the service and the whole test suite. All of them consume
 `CycleTelemetry` and none of them import `cobalt.sim`.
-
-The work is one class and a DBC file. Keeping it that small was the reason for
-putting the seam at `cobalt.hal` and writing everything above it against an
-interface, rather than against a simulator that happened to be convenient.

@@ -1,17 +1,15 @@
-"""The hardware abstraction layer, including the half of it that does not exist.
+"""The hardware abstraction layer: the simulated source and the replay source.
 
-The last two tests are the important ones. They assert that the hardware-backed
-source raises rather than returning something plausible, which is the difference
-between an honest gap and a silent lie. If somebody implements `SerialBms` they
-will fail and that is the correct signal.
+The CAN link that replaced the old serial stub has its own file,
+`tests/test_can.py`.
 """
 
 from __future__ import annotations
 
 import pytest
 
-from cobalt.hal.base import BmsSource, CycleTelemetry, NoHardwareError
-from cobalt.hal.serial_bms import SerialBms
+from cobalt.hal.base import BmsSource, CycleTelemetry
+from cobalt.hal.can_bms import CanBms
 from cobalt.hal.simulated import ReplayBms, SimulatedBms
 from cobalt.sim.cell import CellParameters, DutyCycle
 
@@ -19,7 +17,7 @@ from cobalt.sim.cell import CellParameters, DutyCycle
 def test_simulated_source_satisfies_the_protocol():
     assert isinstance(SimulatedBms(), BmsSource)
     assert isinstance(ReplayBms("P1", []), BmsSource)
-    assert isinstance(SerialBms(port="COM3", pack_id="P1"), BmsSource)
+    assert isinstance(CanBms(pack_id="P1"), BmsSource)
 
 
 def test_simulated_source_streams_cycles_in_order():
@@ -127,38 +125,3 @@ def test_replay_can_be_rewound():
     assert replay.read_cycle().cycle == 1
     replay.open()
     assert replay.read_cycle().cycle == 1
-
-
-# -- the gap ------------------------------------------------------------
-
-
-def test_the_hardware_source_refuses_to_open():
-    source = SerialBms(port="COM3", pack_id="PACK-1")
-    with pytest.raises(NoHardwareError, match="docs/HARDWARE.md"):
-        source.open()
-
-
-def test_the_hardware_source_refuses_to_read():
-    source = SerialBms(port="/dev/ttyUSB0", pack_id="PACK-2")
-    with pytest.raises(NoHardwareError):
-        source.read_cycle()
-
-
-def test_the_hardware_error_is_both_a_missing_feature_and_a_link_failure():
-    """Callers check for either and both should catch this."""
-    assert issubclass(NoHardwareError, NotImplementedError)
-    assert issubclass(NoHardwareError, RuntimeError)
-
-
-def test_the_hardware_source_can_still_be_configured_and_inspected():
-    """Wiring and dependency injection must be testable without a cycler."""
-    source = SerialBms(port="COM7", pack_id="PACK-3", baudrate=57_600)
-    described = source.describe()
-    assert described["implemented"] is False
-    assert described["baudrate"] == 57_600
-    assert "HARDWARE.md" in str(described["reason"])
-
-
-def test_closing_an_unopened_hardware_source_is_safe():
-    """So a `finally: source.close()` in a caller stays correct."""
-    SerialBms(port="COM9", pack_id="PACK-4").close()

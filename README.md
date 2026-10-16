@@ -13,8 +13,11 @@ bill.
 > [`src/cobalt/sim`](src/cobalt/sim) and the simulated cells are smoother and
 > better behaved than real ones. What that permits and what it forbids is set
 > out in [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md), the model card leads with
-> it and [`src/cobalt/hal/serial_bms.py`](src/cobalt/hal/serial_bms.py) is the
-> one class that would need writing if a cycler arrived.
+> it. The battery link is real code against a simulated far end: a CAN
+> receiver, [`src/cobalt/hal/can_bms.py`](src/cobalt/hal/can_bms.py), decoding a
+> [DBC](src/cobalt/hal/cobalt_bms.dbc) published by a simulated BMS node on a
+> python-can virtual bus or a Linux `vcan` interface. It has never met a physical
+> adapter.
 
 ![Capacity fade for sixty simulated cells, coloured by manufacturing batch](analysis/default/capacity_fade.png)
 
@@ -349,7 +352,7 @@ formality and there is a test asserting that it stays that way.
 ```
 src/cobalt/
   sim/          cell degradation model and fleet generator (the stand-in for a lab)
-  hal/          BmsSource interface: SimulatedBms works, SerialBms is the honest gap
+  hal/          BmsSource interface, the CAN link (DBC, simulated BMS node, receiver)
   data/         on-disk schema and the three split protocols
   features/     early-life dQ(V) features and online window features
   models/       baselines, regressors, split conformal with grouped calibration
@@ -357,7 +360,8 @@ src/cobalt/
   business/     newsvendor scheduling and Bayes-optimal lot grading
   service/      FastAPI: ingest telemetry, get a booking, rank the fleet
   deploy.py     fit the shipped models, write the model card
-  cli.py        generate / evaluate / stream / report / serve
+  realdata/     download, extract and evaluate the public Severson et al. cells
+  cli.py        generate / evaluate / stream / bms-node / report / serve / real-data
 ```
 
 ### The service
@@ -376,20 +380,36 @@ There is one feature-extraction function, used by training and by serving alike
 and a test asserts the service and the library return the same number for the
 same window. Training-serving skew is not a risk this codebase takes.
 
-### The hardware gap, concretely
+### The battery link, over CAN
 
 ```bash
-make stream
+make stream        # the simulated pack straight into the model
+make stream-can    # the same pack through a simulated BMS, a CAN bus and a DBC
 ```
 
-runs a simulated pack through the deployed model over the same interface a real
-one would use, cycle by cycle. Swapping in real hardware is one class:
-[`SerialBms`](src/cobalt/hal/serial_bms.py), which currently raises
-`NoHardwareError` from every method that would touch a device, with a test
-asserting it does rather than returning something plausible.
-[`docs/HARDWARE.md`](docs/HARDWARE.md) specifies the rig, down to why three
-coating lots is the minimum that makes this repository's argument testable at
-all.
+The second runs a simulated BMS node
+([`can_node.py`](src/cobalt/hal/can_node.py)) that publishes live pack status,
+four series cell voltages and temperatures through each charge and discharge,
+then five cycle summary frames, all encoded with cantools from
+[`cobalt_bms.dbc`](src/cobalt/hal/cobalt_bms.dbc). The receiver
+([`can_bms.py`](src/cobalt/hal/can_bms.py)) checks every frame's checksum and
+rolling counter, joins the summaries into one cycle of telemetry and hands it to
+the same feature function and model the service uses. Lost frames and
+incomplete cycles are counted, not papered over.
+
+Every field arrives within half a bit of what was sent, and the tests assert
+exactly that tolerance per field, read from the DBC. The predictions are not
+identical: the deployed gradient-boosted model has thresholds and a quantised
+input can land on the other side of one. Over the committed 1,200-cycle demo
+([`stream_demo_can.json`](artifacts/default/stream_demo_can.json)) 38 of the 47
+remaining-life estimates are identical to the direct path and the other nine
+move by between 1.0 and 9.7 cycles, at most 1.2% of the estimate. Continuous integration also runs the node and the receiver as two
+processes on a Linux `vcan0` interface when the runner can load the module.
+
+All of that is simulated at both ends. It has not been run against a physical
+CAN adapter or a real BMS; [`docs/HARDWARE.md`](docs/HARDWARE.md) specifies the
+rig that would take, down to why three coating lots is the minimum that makes
+this repository's argument testable at all.
 
 ---
 

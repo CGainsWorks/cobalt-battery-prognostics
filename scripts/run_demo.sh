@@ -29,6 +29,9 @@ echo "==> evaluating, pricing, plotting and fitting"
 echo "==> streaming a simulated pack through the deployed model"
 "$PYTHON" -m cobalt.cli stream --config "$CONFIG"
 
+echo "==> the same pack through a simulated BMS node, a CAN bus and the DBC"
+"$PYTHON" -m cobalt.cli stream --config "$CONFIG" --source can
+
 echo "==> checking the README against what was just produced"
 "$PYTHON" -m cobalt.check_readme --config "$CONFIG"
 

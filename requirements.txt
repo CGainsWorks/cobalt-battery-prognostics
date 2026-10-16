@@ -9,3 +9,8 @@ PyYAML==6.0.3
 matplotlib==3.11.1
 fastapi==0.141.1
 uvicorn==0.52.4
+# The CAN link: python-can for the bus, cantools for the DBC.
+python-can==4.6.1
+cantools==45.0.0
+# Reading the Severson et al. MATLAB v7.3 files, which are HDF5.
+h5py==3.16.0

@@ -51,7 +51,7 @@ env:
 jobs:
   checks:
     name: checks and pipeline (py3.12)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # Measured at about ninety seconds of work. Eight leaves room for a cold
     # runner without letting a hang sit on one for twenty.
     timeout-minutes: 8
@@ -113,17 +113,27 @@ jobs:
           fi
           echo "every file under src/, tests/ and scripts/ is tracked"
 
-      - name: The committed stream log is reproducible
-        # cobalt stream runs a simulated pack through the committed model over
-        # the hardware interface. Its output is committed, so it has to come out
-        # the same every time or `make demo` leaves a dirty tree and the
-        # byte-identical claim in the README stops holding.
+      - name: The committed stream logs are reproducible
+        # cobalt stream runs a simulated pack through the committed model, once
+        # straight from the simulator and once through a simulated BMS node, a
+        # python-can virtual bus and the DBC. Both logs are committed, so both
+        # have to come out the same every time or `make demo` leaves a dirty
+        # tree and the byte-identical claim in the README stops holding.
         run: |
           set -euo pipefail
           python -m cobalt.cli stream --config config/default.yaml
-          git diff --exit-code -- artifacts/default/stream_demo.json \
-            || { echo "the stream log changed between runs"; exit 1; }
-          echo "stream log reproduced byte for byte"
+          python -m cobalt.cli stream --config config/default.yaml --source can
+          git diff --exit-code -- artifacts/default/stream_demo.json artifacts/default/stream_demo_can.json \
+            || { echo "a stream log changed between runs"; exit 1; }
+          echo "both stream logs reproduced byte for byte"
+
+      - name: CAN link over Linux vcan, node and receiver as two processes
+        # The tests run both ends on the in-process virtual bus. This puts them
+        # in separate processes on a SocketCAN vcan0 interface, the code path a
+        # physical adapter would use. It needs the vcan kernel module; if the
+        # runner cannot load it the script says so and the step passes, since
+        # the protocol itself is already covered by tests/test_can.py.
+        run: bash scripts/can_vcan_e2e.sh
 
       - name: Committed generated files use LF and carry no absolute paths
         # Path.write_text follows the platform, so a file written on Windows and
@@ -154,7 +164,8 @@ jobs:
               artifacts/ci/early_life_model.joblib \
               artifacts/ci/online_model.joblib \
               artifacts/ci/model_card.json \
-              artifacts/ci/stream_demo.json ; do
+              artifacts/ci/stream_demo.json \
+              artifacts/ci/stream_demo_can.json ; do
             test -s "$artefact" || { echo "missing or empty: $artefact"; exit 1; }
             echo "ok: $artefact ($(stat -c%s "$artefact") bytes)"
           done
@@ -182,12 +193,14 @@ jobs:
             analysis/ci/
             artifacts/ci/model_card.json
             artifacts/ci/stream_demo.json
+            artifacts/ci/stream_demo_can.json
+            artifacts/ci/stream_vcan.json
           retention-days: 7
           if-no-files-found: warn
 
   compat:
     name: compat (py3.13)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 6
     steps:
       - uses: actions/checkout@v4
@@ -219,7 +232,7 @@ jobs:
     # suite, and building it on every commit of every branch was the single most
     # expensive thing this workflow did.
     if: github.event_name != 'pull_request'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4

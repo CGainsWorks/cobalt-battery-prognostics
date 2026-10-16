@@ -41,6 +41,16 @@ class SimulatedBms(BmsSource):
     def pack_id(self) -> str:
         return self._pack_id
 
+    @property
+    def cell(self) -> Cell | None:
+        """The simulated cell behind the telemetry, or ``None`` before :meth:`open`.
+
+        Exposed for the simulated CAN node, which needs the cell's present
+        resistance and open-circuit voltage to synthesise live frames between
+        the cycle summaries. Nothing on the estimator side ever touches it.
+        """
+        return self._cell
+
     def open(self) -> None:
         if self._cell is None:
             self._cell = Cell(self._parameters, self._duty, rng=np.random.default_rng(self._seed))

@@ -22,6 +22,9 @@ dependencies = [
     "fastapi>=0.121",
     "uvicorn>=0.41",
     "joblib>=1.4",
+    "python-can>=4.6",
+    "cantools>=45.0",
+    "h5py>=3.16",
 ]
 
 [project.scripts]
@@ -30,6 +33,10 @@ cobalt = "cobalt.cli:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["cobalt*"]
+
+[tool.setuptools.package-data]
+# The DBC is read at run time by both ends of the CAN link.
+"cobalt.hal" = ["*.dbc"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

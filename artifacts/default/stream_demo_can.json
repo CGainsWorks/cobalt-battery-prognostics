@@ -1,0 +1,358 @@
+{
+  "pack_id": "SIM-0001",
+  "source": "cobalt.hal.can_bms.CanBms",
+  "note": "simulated pack and simulated BMS node, frames carried over a python-can virtual bus and decoded with cobalt_bms.dbc. No hardware involved. See docs/HARDWARE.md.",
+  "link": {
+    "frames_received": 20400,
+    "frames_decoded": 20400,
+    "foreign_frames": 0,
+    "checksum_errors": 0,
+    "counter_gaps": 0,
+    "frames_lost_estimate": 0,
+    "cycles_assembled": 1200,
+    "incomplete_cycles_dropped": 0,
+    "by_message": {
+      "BMS_PackStatus": 4800,
+      "BMS_CellVoltages": 4800,
+      "BMS_Temperatures": 4800,
+      "BMS_CycleCapacity": 1200,
+      "BMS_CycleResistance": 1200,
+      "BMS_CycleThermal": 1200,
+      "BMS_CycleRates": 1200,
+      "BMS_CycleThroughput": 1200
+    }
+  },
+  "cycles_streamed": 1200,
+  "predictions": [
+    {
+      "cycle": 50,
+      "state_of_health": 0.9867,
+      "book_after_cycles": 1302.0,
+      "remaining_estimate": 1956.1,
+      "remaining_upper": 2938.9
+    },
+    {
+      "cycle": 75,
+      "state_of_health": 0.9811,
+      "book_after_cycles": 1220.2,
+      "remaining_estimate": 1833.3,
+      "remaining_upper": 2754.3
+    },
+    {
+      "cycle": 100,
+      "state_of_health": 0.9804,
+      "book_after_cycles": 1264.9,
+      "remaining_estimate": 1900.5,
+      "remaining_upper": 2855.4
+    },
+    {
+      "cycle": 125,
+      "state_of_health": 0.9776,
+      "book_after_cycles": 1160.0,
+      "remaining_estimate": 1742.9,
+      "remaining_upper": 2618.6
+    },
+    {
+      "cycle": 150,
+      "state_of_health": 0.9754,
+      "book_after_cycles": 1104.2,
+      "remaining_estimate": 1659.0,
+      "remaining_upper": 2492.5
+    },
+    {
+      "cycle": 175,
+      "state_of_health": 0.9734,
+      "book_after_cycles": 1099.5,
+      "remaining_estimate": 1651.9,
+      "remaining_upper": 2481.8
+    },
+    {
+      "cycle": 200,
+      "state_of_health": 0.9707,
+      "book_after_cycles": 1180.9,
+      "remaining_estimate": 1774.2,
+      "remaining_upper": 2665.5
+    },
+    {
+      "cycle": 225,
+      "state_of_health": 0.9698,
+      "book_after_cycles": 1183.4,
+      "remaining_estimate": 1777.9,
+      "remaining_upper": 2671.2
+    },
+    {
+      "cycle": 250,
+      "state_of_health": 0.9681,
+      "book_after_cycles": 1152.3,
+      "remaining_estimate": 1731.3,
+      "remaining_upper": 2601.1
+    },
+    {
+      "cycle": 275,
+      "state_of_health": 0.965,
+      "book_after_cycles": 1046.0,
+      "remaining_estimate": 1571.5,
+      "remaining_upper": 2361.0
+    },
+    {
+      "cycle": 300,
+      "state_of_health": 0.9612,
+      "book_after_cycles": 958.9,
+      "remaining_estimate": 1440.7,
+      "remaining_upper": 2164.5
+    },
+    {
+      "cycle": 325,
+      "state_of_health": 0.9573,
+      "book_after_cycles": 1029.9,
+      "remaining_estimate": 1547.3,
+      "remaining_upper": 2324.8
+    },
+    {
+      "cycle": 350,
+      "state_of_health": 0.9576,
+      "book_after_cycles": 941.4,
+      "remaining_estimate": 1414.4,
+      "remaining_upper": 2125.1
+    },
+    {
+      "cycle": 375,
+      "state_of_health": 0.958,
+      "book_after_cycles": 977.9,
+      "remaining_estimate": 1469.2,
+      "remaining_upper": 2207.4
+    },
+    {
+      "cycle": 400,
+      "state_of_health": 0.9546,
+      "book_after_cycles": 998.9,
+      "remaining_estimate": 1500.8,
+      "remaining_upper": 2254.8
+    },
+    {
+      "cycle": 425,
+      "state_of_health": 0.9517,
+      "book_after_cycles": 959.9,
+      "remaining_estimate": 1442.2,
+      "remaining_upper": 2166.8
+    },
+    {
+      "cycle": 450,
+      "state_of_health": 0.9488,
+      "book_after_cycles": 936.6,
+      "remaining_estimate": 1407.2,
+      "remaining_upper": 2114.2
+    },
+    {
+      "cycle": 475,
+      "state_of_health": 0.9474,
+      "book_after_cycles": 922.8,
+      "remaining_estimate": 1386.4,
+      "remaining_upper": 2083.0
+    },
+    {
+      "cycle": 500,
+      "state_of_health": 0.9479,
+      "book_after_cycles": 920.0,
+      "remaining_estimate": 1382.3,
+      "remaining_upper": 2076.8
+    },
+    {
+      "cycle": 525,
+      "state_of_health": 0.9446,
+      "book_after_cycles": 861.6,
+      "remaining_estimate": 1294.6,
+      "remaining_upper": 1945.0
+    },
+    {
+      "cycle": 550,
+      "state_of_health": 0.9422,
+      "book_after_cycles": 808.1,
+      "remaining_estimate": 1214.1,
+      "remaining_upper": 1824.1
+    },
+    {
+      "cycle": 575,
+      "state_of_health": 0.9409,
+      "book_after_cycles": 858.2,
+      "remaining_estimate": 1289.4,
+      "remaining_upper": 1937.2
+    },
+    {
+      "cycle": 600,
+      "state_of_health": 0.9394,
+      "book_after_cycles": 811.3,
+      "remaining_estimate": 1218.9,
+      "remaining_upper": 1831.3
+    },
+    {
+      "cycle": 625,
+      "state_of_health": 0.9394,
+      "book_after_cycles": 792.1,
+      "remaining_estimate": 1190.1,
+      "remaining_upper": 1788.1
+    },
+    {
+      "cycle": 650,
+      "state_of_health": 0.9334,
+      "book_after_cycles": 781.8,
+      "remaining_estimate": 1174.6,
+      "remaining_upper": 1764.8
+    },
+    {
+      "cycle": 675,
+      "state_of_health": 0.934,
+      "book_after_cycles": 685.0,
+      "remaining_estimate": 1029.2,
+      "remaining_upper": 1546.2
+    },
+    {
+      "cycle": 700,
+      "state_of_health": 0.9284,
+      "book_after_cycles": 733.8,
+      "remaining_estimate": 1102.5,
+      "remaining_upper": 1656.4
+    },
+    {
+      "cycle": 725,
+      "state_of_health": 0.9254,
+      "book_after_cycles": 683.9,
+      "remaining_estimate": 1027.4,
+      "remaining_upper": 1543.7
+    },
+    {
+      "cycle": 750,
+      "state_of_health": 0.9258,
+      "book_after_cycles": 717.6,
+      "remaining_estimate": 1078.2,
+      "remaining_upper": 1619.9
+    },
+    {
+      "cycle": 775,
+      "state_of_health": 0.9201,
+      "book_after_cycles": 642.1,
+      "remaining_estimate": 964.7,
+      "remaining_upper": 1449.4
+    },
+    {
+      "cycle": 800,
+      "state_of_health": 0.9175,
+      "book_after_cycles": 625.5,
+      "remaining_estimate": 939.7,
+      "remaining_upper": 1411.8
+    },
+    {
+      "cycle": 825,
+      "state_of_health": 0.917,
+      "book_after_cycles": 617.0,
+      "remaining_estimate": 927.0,
+      "remaining_upper": 1392.7
+    },
+    {
+      "cycle": 850,
+      "state_of_health": 0.9115,
+      "book_after_cycles": 597.0,
+      "remaining_estimate": 897.0,
+      "remaining_upper": 1347.6
+    },
+    {
+      "cycle": 875,
+      "state_of_health": 0.9115,
+      "book_after_cycles": 577.1,
+      "remaining_estimate": 867.0,
+      "remaining_upper": 1302.6
+    },
+    {
+      "cycle": 900,
+      "state_of_health": 0.9078,
+      "book_after_cycles": 532.9,
+      "remaining_estimate": 800.6,
+      "remaining_upper": 1202.9
+    },
+    {
+      "cycle": 925,
+      "state_of_health": 0.9076,
+      "book_after_cycles": 522.2,
+      "remaining_estimate": 784.5,
+      "remaining_upper": 1178.7
+    },
+    {
+      "cycle": 950,
+      "state_of_health": 0.9017,
+      "book_after_cycles": 558.5,
+      "remaining_estimate": 839.1,
+      "remaining_upper": 1260.7
+    },
+    {
+      "cycle": 975,
+      "state_of_health": 0.9009,
+      "book_after_cycles": 490.3,
+      "remaining_estimate": 736.6,
+      "remaining_upper": 1106.7
+    },
+    {
+      "cycle": 1000,
+      "state_of_health": 0.8995,
+      "book_after_cycles": 512.2,
+      "remaining_estimate": 769.6,
+      "remaining_upper": 1156.2
+    },
+    {
+      "cycle": 1025,
+      "state_of_health": 0.8954,
+      "book_after_cycles": 462.0,
+      "remaining_estimate": 694.2,
+      "remaining_upper": 1042.9
+    },
+    {
+      "cycle": 1050,
+      "state_of_health": 0.8897,
+      "book_after_cycles": 465.2,
+      "remaining_estimate": 698.9,
+      "remaining_upper": 1050.0
+    },
+    {
+      "cycle": 1075,
+      "state_of_health": 0.8853,
+      "book_after_cycles": 401.8,
+      "remaining_estimate": 603.6,
+      "remaining_upper": 906.9
+    },
+    {
+      "cycle": 1100,
+      "state_of_health": 0.8831,
+      "book_after_cycles": 411.7,
+      "remaining_estimate": 618.6,
+      "remaining_upper": 929.3
+    },
+    {
+      "cycle": 1125,
+      "state_of_health": 0.8798,
+      "book_after_cycles": 396.1,
+      "remaining_estimate": 595.0,
+      "remaining_upper": 894.0
+    },
+    {
+      "cycle": 1150,
+      "state_of_health": 0.8756,
+      "book_after_cycles": 376.3,
+      "remaining_estimate": 565.4,
+      "remaining_upper": 849.5
+    },
+    {
+      "cycle": 1175,
+      "state_of_health": 0.8735,
+      "book_after_cycles": 351.4,
+      "remaining_estimate": 527.9,
+      "remaining_upper": 793.2
+    },
+    {
+      "cycle": 1200,
+      "state_of_health": 0.871,
+      "book_after_cycles": 349.3,
+      "remaining_estimate": 524.7,
+      "remaining_upper": 788.4
+    }
+  ],
+  "mean_prediction_interval_cycles": 989.3
+}

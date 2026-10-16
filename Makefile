@@ -10,7 +10,7 @@ CI_CONFIG ?= config/ci.yaml
 IMAGE ?= cobalt-battery-prognostics:latest
 
 .DEFAULT_GOAL := help
-.PHONY: help setup data evaluate report figures stream serve smoke demo test \
+.PHONY: help setup data evaluate report figures stream stream-can serve smoke demo test \
         lint format check docker-build docker-up docker-test docker-down \
         clean clean-all
 
@@ -20,6 +20,7 @@ help:
 	@echo "make evaluate      every model, every protocol, costs, figures, models"
 	@echo "make report        rebuild the report from an existing summary.json"
 	@echo "make stream        run a simulated pack through the deployed model"
+	@echo "make stream-can    the same pack through a simulated BMS on a CAN bus"
 	@echo "make serve         run the fleet service on http://127.0.0.1:8000"
 	@echo "make demo          everything, end to end, from nothing"
 	@echo "make smoke         the same pipeline small, no README rewrite"
@@ -45,6 +46,9 @@ figures: report
 
 stream:
 	$(PYTHON) -m cobalt.cli stream --config $(CONFIG)
+
+stream-can:
+	$(PYTHON) -m cobalt.cli stream --config $(CONFIG) --source can
 
 serve:
 	$(PYTHON) -m cobalt.cli serve --config $(CONFIG)

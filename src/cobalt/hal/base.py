@@ -1,19 +1,20 @@
 """The seam between this repository and a real battery.
 
 Everything upstream of here consumes :class:`CycleTelemetry` and nothing
-upstream knows or cares where it came from. There are two implementations. One
-replays a simulated cell and is what every test, figure and number in this
-repository runs on. The other talks to a real battery management system over a
-serial link and is **not implemented**, because there was no hardware.
+upstream knows or cares where it came from. There are three implementations:
 
-That is the honest state of it. The interface exists, the simulated side is
-complete and exercised and the hardware side is a documented gap with a
-specific shape rather than a vague intention. `docs/HARDWARE.md` lists the rig
-it needs and exactly which methods have to be filled in.
+* :class:`~cobalt.hal.simulated.SimulatedBms` replays a simulated cell and is
+  what the evaluation, the figures and the README's numbers run on;
+* :class:`~cobalt.hal.simulated.ReplayBms` replays telemetry that already
+  exists;
+* :class:`~cobalt.hal.can_bms.CanBms` decodes it off a CAN bus with the
+  repository's DBC. It has only ever been run against a simulated BMS node, on
+  python-can's virtual bus and on a Linux vcan interface, never against a
+  physical adapter. `docs/HARDWARE.md` says what that would take.
 
-Keeping the boundary this narrow is the point: when a cycler does arrive, the
-work is one class and the feature extraction, the models, the service and the
-tests are all already written against telemetry rather than against a simulator.
+Keeping the boundary this narrow is the point: the feature extraction, the
+models, the service and the tests are all written against telemetry rather than
+against a simulator, so the transport underneath can change without them.
 """
 
 from __future__ import annotations
@@ -69,12 +70,3 @@ class BmsSource(Protocol):
 
 class BmsError(RuntimeError):
     """Raised when a source cannot deliver telemetry."""
-
-
-class NoHardwareError(BmsError, NotImplementedError):
-    """Raised by every hardware-backed source in this repository.
-
-    Deliberately a subclass of both, so a caller that is checking for a missing
-    feature and a caller that is checking for a dead link both catch it and so
-    it never gets mistaken for a bug in the pipeline.
-    """

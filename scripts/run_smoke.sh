@@ -9,7 +9,7 @@
 # error. The fold standard deviations will be enormous and the numbers will move
 # if you change the seed. What this proves is that simulation, feature
 # extraction, every split protocol, every model, conformal calibration, both cost
-# models, the figures, the model card and the hardware interface all connect.
+# models, the figures, the model card and the CAN link all connect.
 #
 # Everything it writes is stamped with the `ci` config name so it cannot be
 # mistaken for the results in the README, which come from config/default.yaml.
@@ -41,6 +41,10 @@ echo "==> evaluating, pricing, plotting and fitting"
 warn
 echo "==> streaming a simulated pack through the deployed model"
 "$PYTHON" -m cobalt.cli stream --config "$CONFIG" --stride 20 --max-cycles 600
+
+warn
+echo "==> the same pack through a simulated BMS node, a CAN bus and the DBC"
+"$PYTHON" -m cobalt.cli stream --config "$CONFIG" --stride 20 --max-cycles 600 --source can
 
 warn
 cat <<'DONE'
