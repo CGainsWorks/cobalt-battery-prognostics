@@ -1,17 +1,19 @@
 name: CI
 
-# Three jobs, deliberately.
+# Four jobs, deliberately.
 #
 # GitHub bills each job rounded up to the whole minute, so five jobs doing four
 # and a half minutes of work cost seven minutes. The previous shape here paid
 # that rounding five times over and installed the same dependency set four
 # times, which was 42% of all the compute it used.
 #
-# So: one job does every check that needs Python 3.12, a second repeats only
-# lint and tests on 3.13 to catch version drift and the container build runs on
-# pushes to main rather than on every commit of every branch. Installs go
-# through uv, which handles this dependency set in well under ten seconds
-# against pip's twenty-eight.
+# So: one job does every check that needs Python 3.12, including the CAN link
+# over vcan, a second repeats only lint and tests on 3.13 to catch version
+# drift, and the container build and the real-cell comparison run on pushes to
+# main rather than on every commit of every branch. The real-cell job is its
+# own job because it may download several gigabytes and should not hold up the
+# fast feedback. Installs go through uv, which handles this dependency set in
+# well under ten seconds against pip's twenty-eight.
 #
 # This repository is public, so none of these minutes are actually billed.
 # Keeping it lean is for the feedback loop and so the same workflow stays
@@ -57,9 +59,9 @@ jobs:
     timeout-minutes: 8
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
@@ -184,7 +186,7 @@ jobs:
 
       # Only on failure. On a green run nobody opens these, and uploading them
       # anyway costs time on every single push.
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: smoke-outputs
@@ -203,9 +205,9 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 6
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
 
@@ -225,6 +227,61 @@ jobs:
       - name: Tests
         run: pytest -q
 
+  real-data:
+    name: real cells (Severson et al. 2019)
+    # The evaluation protocol re-run on the public Severson et al. cells and
+    # compared against the committed results/severson/summary.json. The raw
+    # data is about 8.3 GB from the publisher and is never committed. A few
+    # megabytes of extract is kept in the Actions cache; on a cache miss the
+    # three batches are downloaded one at a time, read and deleted, so the
+    # runner never holds more than one. If the publisher is unreachable the
+    # job says so and passes: the committed numbers were made from the same
+    # code and the outage is not a defect here.
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --quiet uv
+          uv pip install --system -r requirements.txt
+          uv pip install --system --no-deps -e .
+
+      - name: Restore the extract
+        id: extract-cache
+        uses: actions/cache@v6
+        with:
+          path: data/real/severson/extract
+          # The extract changes only if the loader does.
+          key: severson-extract-v1-${{ hashFiles('src/cobalt/realdata/severson.py') }}
+
+      - name: Download, read and delete the three batches
+        id: fetch
+        if: steps.extract-cache.outputs.cache-hit != 'true'
+        run: |
+          set -uo pipefail
+          df -h . | tail -1
+          if python -m cobalt.cli real-data extract --fetch --delete-raw --connections 8; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::the Severson data could not be downloaded or read; the real-data comparison is skipped on this run"
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            rm -rf data/real/severson/extract
+          fi
+
+      - name: Re-run the evaluation and compare with the committed results
+        if: steps.extract-cache.outputs.cache-hit == 'true' || steps.fetch.outputs.available == 'true'
+        run: |
+          set -euo pipefail
+          python -m cobalt.cli real-data evaluate --output-dir results/severson-check --no-figures
+          python -m cobalt.cli real-data compare --against results/severson-check/summary.json
+
   docker:
     name: docker build
     # Pushes to main and manual runs only. The image is a delivery artefact
@@ -235,11 +292,11 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 12
     steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
+      - uses: actions/checkout@v7
+      - uses: docker/setup-buildx-action@v4
 
       - name: Build the image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: docker/Dockerfile
