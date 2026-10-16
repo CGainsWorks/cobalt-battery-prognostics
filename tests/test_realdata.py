@@ -259,3 +259,40 @@ def test_the_committed_real_results_render_into_the_readme(repository_root_path:
         summary
     )
     assert summary["data_source"] == "real"
+
+
+def test_gradient_boosting_figures_get_the_documented_slack_and_nothing_else_does():
+    """Histogram gradient boosting differs slightly between processors.
+
+    The numbers below are the ones a GitHub runner produced against the
+    committed summary: 1.3% on a mean RMSE, over 20% on a fold spread. Those
+    must pass. The same 1.3% on a linear model is drift and must not.
+    """
+
+    def summary(gbm_rmse: float, gbm_std: float, enet_rmse: float, picp: float) -> dict:
+        return {
+            "tasks": {
+                "online_soh": {
+                    "protocols": {
+                        "random_cycle": {
+                            "models": {
+                                "gradient_boosting": {
+                                    "rmse_cycles": gbm_rmse,
+                                    "rmse_cycles_std": gbm_std,
+                                },
+                                "ridge": {"rmse_cycles": enet_rmse},
+                            },
+                            "intervals": {"matched_calibration": {"picp": picp}},
+                        }
+                    }
+                }
+            }
+        }
+
+    committed = summary(70.5982, 5.51748, 173.0, 0.900249)
+    assert real_evaluate.compare(committed, summary(69.6875, 6.8036, 173.0, 0.90271)) == []
+    drift = real_evaluate.compare(committed, summary(69.6875, 6.8036, 175.3, 0.90271))
+    assert drift == [
+        "tasks.online_soh.protocols.random_cycle.models.ridge.rmse_cycles: 173.0 against 175.3"
+    ]
+    assert real_evaluate.compare(committed, summary(60.0, 5.5, 173.0, 0.90)) != []

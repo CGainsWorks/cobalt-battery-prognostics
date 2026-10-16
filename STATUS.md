@@ -35,7 +35,10 @@ As of 2026-10-16.
   `docs/datasets/severson-2019.md`. A CI job re-runs the evaluation from a
   cached extract (downloading on a cache miss) and fails if it drifts from the
   committed summary; if the publisher is unreachable it says so and skips.
-- **Tests.** 242 in total, passing on Python 3.12 and 3.13 and inside the
+  Gradient-boosting means are compared at 3% and their fold spreads not at all,
+  because histogram gradient boosting gives slightly different trees on
+  different processors (measured: 1.3% on a mean RMSE between two runners).
+- **Tests.** 243 in total, passing on Python 3.12 and 3.13 and inside the
   container image.
 
 ## In progress
@@ -70,5 +73,8 @@ As of 2026-10-16.
 - **Dataset licence unconfirmed.** The publisher's licence text could not be
   retrieved; only aggregate metrics are committed and the extract lives in the
   Actions cache. See the dataset card.
+- **Gradient boosting is not bit reproducible across processors.** The
+  committed real-cell gradient-boosting figures are what one machine produced;
+  another can differ by about 1% in the mean and much more in the fold spread.
 - **Glitch filter.** 101 of 104,925 real cycle records are dropped as physically
   impossible by rules this repository chose; the counts per rule are recorded.

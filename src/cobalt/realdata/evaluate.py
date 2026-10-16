@@ -303,13 +303,37 @@ def update_readme(summary: dict, readme: Path | None = None) -> bool:
     return False
 
 
+#: Relative tolerance for anything produced by histogram gradient boosting.
+#: Its histograms are summed in parallel with CPU-specific vector code, so the
+#: same seed gives slightly different trees on different processors. Measured
+#: between two GitHub runners and a Windows desktop: up to 1.3% on a mean RMSE,
+#: 3% on a mean bias and over 20% on a fold standard deviation. The linear
+#: models and baselines have matched within 0.2% everywhere and keep that tolerance.
+HGB_RTOL = 0.03
+#: Fields of a gradient-boosting result that are compared at all. Fold spreads
+#: and the signed bias move too much between processors to be a drift check.
+HGB_COMPARED = frozenset(
+    {"n", "n_folds", "rmse_cycles", "mae_cycles", "mape", "alpha_lambda", "spearman"}
+    | {"nominal_coverage", "picp", "mean_width_log", "median_width_cycles"}
+)
+
+
+def _from_gradient_boosting(path: str) -> bool:
+    # The online task's intervals wrap its deployed model, which is gradient boosting.
+    return ".gradient_boosting." in f"{path}." or (
+        path.startswith("tasks.online_soh.") and ".intervals." in path
+    )
+
+
 def compare(
     expected: dict, actual: dict, rtol: float = 2e-3, atol: float = 1e-6, path: str = ""
 ) -> list[str]:
     """Differences between two summaries beyond a tolerance.
 
-    Numeric results move by parts per million between platforms and library
-    builds, so a byte comparison would fail for reasons that are not drift.
+    Deterministic models move by tiny amounts between platforms and
+    library builds, so a byte comparison would fail for reasons that are not
+    drift. Gradient-boosting figures move by more and are compared on their
+    means at :data:`HGB_RTOL`.
     """
     problems: list[str] = []
     if isinstance(expected, dict) and isinstance(actual, dict):
@@ -317,6 +341,12 @@ def compare(
             where = f"{path}.{key}" if path else str(key)
             if key not in expected or key not in actual:
                 problems.append(f"{where}: present in only one summary")
+            elif (
+                _from_gradient_boosting(where)
+                and not isinstance(expected[key], dict)
+                and key not in HGB_COMPARED
+            ):
+                continue
             else:
                 problems += compare(expected[key], actual[key], rtol, atol, where)
     elif isinstance(expected, list) and isinstance(actual, list):
@@ -326,6 +356,8 @@ def compare(
             for i, (a, b) in enumerate(zip(expected, actual)):
                 problems += compare(a, b, rtol, atol, f"{path}[{i}]")
     elif isinstance(expected, (int, float)) and isinstance(actual, (int, float)):
+        if _from_gradient_boosting(path):
+            rtol, atol = max(rtol, HGB_RTOL), max(atol, 0.01)
         if not math.isclose(float(expected), float(actual), rel_tol=rtol, abs_tol=atol):
             problems.append(f"{path}: {expected} against {actual}")
     elif expected != actual:

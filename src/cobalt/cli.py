@@ -438,7 +438,10 @@ def command_real_data(args: argparse.Namespace) -> int:
         for problem in problems[:40]:
             _log(f"  {problem}")
         return 1
-    _log(f"{args.against} matches {committed} within rtol {args.rtol}")
+    _log(
+        f"{args.against} matches {committed} within rtol {args.rtol} "
+        f"({real_evaluate.HGB_RTOL} for gradient boosting, see cobalt.realdata.evaluate)"
+    )
     return 0
 
 

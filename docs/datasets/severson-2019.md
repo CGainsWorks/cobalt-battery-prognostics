@@ -134,3 +134,7 @@ written by `extract` to `manifest.json` and to the committed
   conformal calibration fits on one campaign and calibrates on the other,
   which the library flags as starved.
 - The discharge energy is a windowed proxy, as noted above.
+- The gradient-boosting figures in the committed summary vary slightly by
+  processor (histogram sums in vector code). The CI comparison allows 3% on
+  their means and ignores their fold spreads; every other figure must match to
+  0.2%.

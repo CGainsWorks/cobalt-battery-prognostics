@@ -152,7 +152,12 @@ python -m cobalt.cli real-data evaluate --update-readme
 ```
 
 CI re-runs the evaluation from a cached extract and fails if it drifts from
-[`results/severson/summary.json`](results/severson/summary.json).
+[`results/severson/summary.json`](results/severson/summary.json). The linear
+models and baselines have matched to 0.2% on every machine tried. Gradient
+boosting does not quite: its histograms are summed with processor-specific
+vector code. Two CI runners have disagreed by 1.3% on a mean RMSE and by
+more than 20% on a fold standard deviation. Its means are checked at 3% and its
+fold spreads are not checked.
 
 ---
 
@@ -490,7 +495,7 @@ this repository's argument testable at all.
 | --- | --- |
 | `make demo` | everything, end to end, from nothing |
 | `make smoke` | the same pipeline on a small fleet, about two minutes |
-| `make test` | the test suite, 242 tests |
+| `make test` | the test suite, 243 tests |
 | `make lint` | ruff check and format, over src, tests and scripts |
 | `make check` | assert the README's tables match the committed results |
 | `make serve` | the fleet service |
