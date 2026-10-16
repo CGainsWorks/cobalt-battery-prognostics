@@ -191,7 +191,7 @@ def _join(first: RawCell, continuation: RawCell) -> RawCell:
     return RawCell(first.cell_id, first.batch_id, first.policy, series, first.curves)
 
 
-#: Capacity above this is a logging glitch: 118% of nominal, and no cell in the
+#: Capacity above this is a logging glitch: 118% of nominal and no cell in the
 #: dataset delivers more than about 1.1 Ah on a real cycle.
 MAX_PLAUSIBLE_CAPACITY_AH = 1.3
 #: Discharge energy further than this from the cell's own median, as a fraction
@@ -211,7 +211,7 @@ def implausible_records(frame: pd.DataFrame) -> dict[str, pd.Series]:
     capacity of 2.9 Ah from a 1.1 Ah cell, a charge time of 1,290 minutes, a
     negative discharge energy. Left in, one of them dominates every slope and
     mean in the fifty-cycle window it lands in. The rules are deliberately wide,
-    so they catch impossible values and nothing that could be ageing, and every
+    so they catch impossible values and nothing that could be ageing. Every
     record they drop is counted in the manifest.
     """
     energy = frame["discharge_energy_wh"]
@@ -235,7 +235,7 @@ def implausible_records(frame: pd.DataFrame) -> dict[str, pd.Series]:
 def label(discharge_capacity: np.ndarray) -> tuple[int, bool]:
     """``(cycle_life, censored)`` by the authors' rule.
 
-    Position 1 of every test run is an empty record (all zeros), and a joined
+    Position 1 of every test run is an empty record (all zeros) and a joined
     continuation brings a second one with it, so empty records are skipped
     rather than read as a capacity of zero.
     """

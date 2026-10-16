@@ -5,7 +5,7 @@ the frames in [`src/cobalt/hal/cobalt_bms.dbc`](../src/cobalt/hal/cobalt_bms.dbc
 with cantools and assembles them into `CycleTelemetry`. Everything it has been
 run against is simulated: a simulated BMS node
 (`cobalt.hal.can_node.SimulatedBmsNode`) on python-can's in-process virtual bus
-in every test, and the same node as a separate process on a Linux `vcan0`
+in every test and the same node as a separate process on a Linux `vcan0`
 interface in continuous integration when the runner can load the module.
 
 This page is what it would take to run it against a real pack and what would
@@ -135,7 +135,7 @@ are cheap and each one corresponds to a real failure that is silent otherwise.
    telemetry store deduplicates and re-sorts on ingest but a systematically
    missing cycle index will silently shorten every window. `CanBms.stats`
    already counts rolling-counter gaps, checksum failures and cycles dropped for
-   an incomplete summary, and a test drops a frame on purpose to prove it.
+   an incomplete summary and a test drops a frame on purpose to prove it.
 5. **Clock.** Cycle indices from the pack and from the cycler must not drift
    apart. The online features are indexed by cycle, not by time and a drifting
    index corrupts every slope in the feature set.

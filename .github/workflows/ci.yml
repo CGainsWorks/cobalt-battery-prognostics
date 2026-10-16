@@ -9,7 +9,7 @@ name: CI
 #
 # So: one job does every check that needs Python 3.12, including the CAN link
 # over vcan, a second repeats only lint and tests on 3.13 to catch version
-# drift, and the container build and the real-cell comparison run on pushes to
+# drift and the container build and the real-cell comparison run on pushes to
 # main rather than on every commit of every branch. The real-cell job is its
 # own job because it may download several gigabytes and should not hold up the
 # fast feedback. Installs go through uv, which handles this dependency set in

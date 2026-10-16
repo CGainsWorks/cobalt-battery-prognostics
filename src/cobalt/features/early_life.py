@@ -10,7 +10,7 @@ battery cycle life before capacity degradation* (Nature Energy, 2019), which
 found that the *variance* of the difference between two early discharge curves
 carries almost all of the signal and that it does so long before the capacity
 fade curve shows anything at all. Reimplemented here from the paper, not from
-the authors' code, and run on both the simulated fleet and, through
+the authors' code and run on both the simulated fleet and, through
 `cobalt.realdata`, the authors' own published cells.
 
 The key quantity is
@@ -200,7 +200,7 @@ def build_table(dataset: FleetDataset) -> tuple[pd.DataFrame, dict[str, int]]:
                 key = "missing_curves"
             else:
                 # Only real data gets here: a logger gap inside the first hundred
-                # cycles. Counted under its own name, and only when it happens,
+                # cycles. Counted under its own name and only when it happens,
                 # so the simulator's summary is byte-for-byte what it was.
                 key = "gaps_in_window"
             excluded[key] = excluded.get(key, 0) + 1

@@ -468,7 +468,7 @@ rolling counter, joins the summaries into one cycle of telemetry and hands it to
 the same feature function and model the service uses. Lost frames and
 incomplete cycles are counted, not papered over.
 
-Every field arrives within half a bit of what was sent, and the tests assert
+Every field arrives within half a bit of what was sent and the tests assert
 exactly that tolerance per field, read from the DBC. The predictions are not
 identical: the deployed gradient-boosted model has thresholds and a quantised
 input can land on the other side of one. Over the committed 1,200-cycle demo
@@ -535,7 +535,7 @@ The short version:
   away.
 - **The real-cell numbers are one laboratory dataset.** One cell type, one
   chamber temperature, one discharge rate, laboratory cycling rather than a
-  fleet, and three test campaigns rather than manufacturing lots. They show the
+  fleet and three test campaigns rather than manufacturing lots. They show the
   protocol and the leak on real cells; they are not a fleet accuracy figure.
 - **The methodological results are the transferable part.** That a random split
   leaks, that grouped calibration is required for honest intervals and that the

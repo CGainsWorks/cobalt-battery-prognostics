@@ -6,7 +6,7 @@
 Used after the vcan end to end run. The committed log was made on the
 in-process virtual bus; the run being checked crossed the kernel's SocketCAN
 stack between two processes. The frames are the same bytes either way, so the
-cycles and predictions must be identical, and the link must report no lost
+cycles and predictions must be identical and the link must report no lost
 frames, no checksum failures and no incomplete cycles.
 """
 

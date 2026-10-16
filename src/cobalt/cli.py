@@ -212,7 +212,7 @@ def _stream_source(args: argparse.Namespace):
 
     ``simulated`` reads the simulator directly. ``can`` reads the same simulated
     pack through the CAN link: on the in-process virtual interface a simulated
-    BMS node is started in a thread here, and with ``--external-node`` (for a
+    BMS node is started in a thread here and with ``--external-node`` (for a
     Linux vcan interface, say) the node is expected to be another process,
     started with `cobalt bms-node`.
     """

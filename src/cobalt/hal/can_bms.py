@@ -20,7 +20,7 @@ What it has been run against, honestly:
 It has **not** been run against a physical CAN adapter or a real BMS. Nothing
 in the code is specific to the virtual interfaces (the interface and channel
 are constructor arguments and a PCAN, Kvaser or SocketCAN adapter is the same
-call), but that is a statement about the code rather than a result.
+call) but that is a statement about the code rather than a result.
 
 Frame loss is detected rather than hidden. A gap in a message's rolling
 counter counts the frames that went missing; a cycle whose five summary frames

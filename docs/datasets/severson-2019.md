@@ -43,7 +43,7 @@ Because the terms are unconfirmed, this repository is conservative:
   coverage, cell counts and parity plots, in `results/severson/` and
   `analysis/severson/`.
 - **CI keeps the extract in the GitHub Actions cache**, which is private to the
-  repository's workflows and expires, and otherwise downloads from the
+  repository's workflows and expires and otherwise downloads from the
   publisher.
 - **The paper is cited** wherever the data is used.
 

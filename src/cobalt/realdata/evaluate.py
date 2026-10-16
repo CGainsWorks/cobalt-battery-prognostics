@@ -17,7 +17,7 @@ is a **test campaign**: cells cycled together, months apart from the next
 campaign, under a different set of charging policies. It is not established
 that the batches are different manufacturing lots. So holding one out tests
 generalisation to a new campaign and a new policy set, which is the nearest
-thing this dataset has to the new-lot question the simulator asks, and not the
+thing this dataset has to the new-lot question the simulator asks and not the
 same thing.
 
 Every number written by this module comes from the public Severson et al.

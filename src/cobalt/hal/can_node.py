@@ -86,7 +86,7 @@ class SimulatedBmsNode:
         """Status frames through one charge and one discharge.
 
         State of charge is swept linearly between the discharge cut-off and
-        full, and each cell's terminal voltage is its open-circuit voltage
+        full and each cell's terminal voltage is its open-circuit voltage
         plus or minus the IR drop at the phase current.
         """
         cell = self.source.cell

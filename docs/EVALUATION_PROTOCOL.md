@@ -183,7 +183,7 @@ optimism into somewhere it will be believed.
 `cobalt real-data evaluate` runs `cobalt.evaluate.protocol.run_task` unchanged
 on the public Severson et al. (2019) cells: the same splits, the same leakage
 assertions, the same models and the same conformal calibration. Two settings
-differ because the data forces them. The rated capacity is the cells' 1.1 Ah,
+differ because the data forces them. The rated capacity is the cells' 1.1 Ah
 and there are three test campaigns, so both grouped protocols use three folds
 and batch-independent becomes leave one campaign out. A Severson batch is a
 test campaign with its own charging policies rather than a known manufacturing

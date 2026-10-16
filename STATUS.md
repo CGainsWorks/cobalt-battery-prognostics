@@ -31,7 +31,7 @@ As of 2026-10-16.
   of life; labels reproduce the publisher's `cycle_life` for all of them) and
   runs the unchanged evaluation protocol. Results are in
   `results/severson/summary.json` and `analysis/severson/EVALUATION.md`, the
-  README table is generated from them, and the dataset card is
+  README table is generated from them and the dataset card is
   `docs/datasets/severson-2019.md`. A CI job re-runs the evaluation from a
   cached extract (downloading on a cache miss) and fails if it drifts from the
   committed summary; if the publisher is unreachable it says so and skips.
@@ -58,7 +58,7 @@ As of 2026-10-16.
   used. Every number outside `results/severson/` and `analysis/severson/` is
   simulated. The CAN link has only ever talked to the simulated node, on the
   python-can virtual bus and on Linux vcan; the DBC is designed here, not a
-  vendor's, and the checksum is a simple ones-complement sum rather than AUTOSAR
+  vendor's and the checksum is a simple ones-complement sum rather than AUTOSAR
   E2E. See `docs/HARDWARE.md`.
 - **Quantisation moves predictions slightly.** Over the 1,200-cycle CAN demo,
   38 of 47 remaining-life estimates match the direct path exactly and the other

@@ -10,7 +10,7 @@ interrupted run resumes with the ranges it does not have. Peak disk use is the
 size of the file, which matters on a CI runner.
 
 Nothing here executes or unpickles what it downloads. The files are MATLAB
-v7.3 containers, which are HDF5, and they are only ever opened by h5py.
+v7.3 containers, which are HDF5. They are only ever opened by h5py.
 """
 
 from __future__ import annotations

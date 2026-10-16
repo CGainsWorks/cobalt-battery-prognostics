@@ -15,7 +15,7 @@ from the simulator in `cobalt.sim`, with one exception: `results/severson/` and
 cells of Severson et al. (2019). Those cells were cycled by their authors, not
 here. See [`datasets/severson-2019.md`](datasets/severson-2019.md).
 
-The battery link is implemented over CAN, but both ends of every run are
+The battery link is implemented over CAN but both ends of every run are
 simulated: a simulated BMS node on python-can's virtual bus or a Linux vcan
 interface. No physical CAN adapter or BMS has been connected.
 
@@ -162,9 +162,9 @@ coating lots is the minimum that makes this repository's central argument
 testable at all: with fewer, a batch-independent protocol cannot be run.
 
 On the link side, `CanBms` already takes any python-can interface. What a real
-pack adds is the vendor's own DBC and checksum scheme, very likely the
-integration of a per-cycle summary from live current and voltage, and a physical
-bus; [`HARDWARE.md`](HARDWARE.md) section 4 has the detail.
+pack adds is the vendor's own DBC and checksum scheme; very likely a per-cycle
+summary integrated from live current and voltage; a physical bus.
+[`HARDWARE.md`](HARDWARE.md) section 4 has the detail.
 
 Nothing else in the codebase would change. The features, the split protocols,
 the models, the conformal calibration, the cost models and the service all
