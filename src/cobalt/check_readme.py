@@ -11,6 +11,9 @@ makes a stale number a failing build.
 
     python -m cobalt.check_readme
     python -m cobalt.check_readme --config config/ci.yaml
+
+The real-cell table is checked the same way against
+``results/severson/summary.json`` whenever that file exists.
 """
 
 from __future__ import annotations
@@ -33,7 +36,9 @@ def extract_block(text: str, name: str) -> str:
     return body.strip("\n")
 
 
-def check(readme_path: Path, summary_path: Path) -> list[str]:
+def check(
+    readme_path: Path, summary_path: Path, real_summary_path: Path | None = None
+) -> list[str]:
     """Return a list of human-readable problems. Empty means the README is current."""
     if not summary_path.exists():
         return [
@@ -58,6 +63,23 @@ def check(readme_path: Path, summary_path: Path) -> list[str]:
                 f"  README says:\n{_indent(found)}\n"
                 f"  results say:\n{_indent(table)}"
             )
+
+    if real_summary_path is not None and Path(real_summary_path).exists():
+        from cobalt.realdata.evaluate import README_BLOCK, table_headline
+
+        real = json.loads(Path(real_summary_path).read_text(encoding="utf-8"))
+        table = table_headline(real)
+        try:
+            found = extract_block(readme, README_BLOCK)
+        except ValueError as error:
+            problems.append(str(error))
+        else:
+            if found != table.strip("\n"):
+                problems.append(
+                    f"block {README_BLOCK!r} is stale against {real_summary_path}.\n"
+                    f"  README says:\n{_indent(found)}\n"
+                    f"  results say:\n{_indent(table)}"
+                )
     return problems
 
 
@@ -76,7 +98,8 @@ def main(argv: list[str] | None = None) -> int:
     readme_path = Path(args.readme) if args.readme else root / "README.md"
     summary_path = Path(config.paths.results_dir) / "summary.json"
 
-    problems = check(readme_path, summary_path)
+    real_summary_path = root / "results" / "severson" / "summary.json"
+    problems = check(readme_path, summary_path, real_summary_path)
     if problems:
         print("README does not match the committed results:\n", file=sys.stderr)
         for problem in problems:

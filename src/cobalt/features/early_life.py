@@ -9,8 +9,9 @@ The feature set is the one from Severson et al., *Data-driven prediction of
 battery cycle life before capacity degradation* (Nature Energy, 2019), which
 found that the *variance* of the difference between two early discharge curves
 carries almost all of the signal and that it does so long before the capacity
-fade curve shows anything at all. Reimplemented here against simulated cells,
-not against their data.
+fade curve shows anything at all. Reimplemented here from the paper, not from
+the authors' code, and run on both the simulated fleet and, through
+`cobalt.realdata`, the authors' own published cells.
 
 The key quantity is
 
@@ -48,6 +49,8 @@ DELTA_Q_LATE_CYCLE = 100
 #: Observation window. A cell that dies inside this cannot be predicted from it,
 #: and is excluded with a count rather than dropped quietly.
 OBSERVATION_CYCLES = 100
+#: Absent cycle records tolerated inside the window. See `cell_features`.
+MAX_MISSING_IN_WINDOW = 5
 
 FEATURE_NAMES = (
     "log_var_delta_q",
@@ -104,7 +107,17 @@ def cell_features(dataset: FleetDataset, cell_id: str) -> dict[str, float] | Non
     """The full early-life feature row for one cell, or ``None`` if it died too soon."""
     cycles = dataset.cycles_for(cell_id)
     window = cycles[cycles["cycle"] <= OBSERVATION_CYCLES]
-    if len(window) < OBSERVATION_CYCLES:
+    # Cycles 2 and 100 anchor several features and must both be there. Real
+    # cyclers leave the odd empty record (every Severson cell's cycle 1 is
+    # one), so up to MAX_MISSING_IN_WINDOW absent cycles are tolerated rather
+    # than discarding the cell. A simulated cell either has all hundred or
+    # died inside the window, so this changes nothing for the simulator.
+    present = set(window["cycle"].astype(int))
+    if (
+        2 not in present
+        or OBSERVATION_CYCLES not in present
+        or len(window) < OBSERVATION_CYCLES - MAX_MISSING_IN_WINDOW
+    ):
         return None
 
     difference = delta_q(dataset, cell_id)
@@ -181,8 +194,16 @@ def build_table(dataset: FleetDataset) -> tuple[pd.DataFrame, dict[str, int]]:
         features = cell_features(dataset, cell_id)
         if features is None:
             cycles = dataset.cycles_for(cell_id)
-            key = "died_within_window" if len(cycles) < OBSERVATION_CYCLES else "missing_curves"
-            excluded[key] += 1
+            if len(cycles) < OBSERVATION_CYCLES:
+                key = "died_within_window"
+            elif delta_q(dataset, cell_id) is None:
+                key = "missing_curves"
+            else:
+                # Only real data gets here: a logger gap inside the first hundred
+                # cycles. Counted under its own name, and only when it happens,
+                # so the simulator's summary is byte-for-byte what it was.
+                key = "gaps_in_window"
+            excluded[key] = excluded.get(key, 0) + 1
             continue
 
         rows.append(

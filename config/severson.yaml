@@ -1,0 +1,42 @@
+# The evaluation protocol on real cells: Severson et al. (2019).
+#
+# `cobalt real-data download`, then `extract`, then `evaluate`. The data is
+# downloaded from the publisher and never committed. Dataset card:
+# docs/datasets/severson-2019.md.
+#
+# Only the paths, evaluation and online sections matter here. The fleet,
+# grading, replacement and qualification sections describe the simulator and the
+# cost layer, neither of which runs on real data, so they are left at their
+# defaults and omitted.
+
+name: severson
+seed: 20260822
+
+paths:
+  data_dir: data/real/severson/extract
+  results_dir: results/severson
+  analysis_dir: analysis/severson
+  artifacts_dir: artifacts/severson
+
+evaluation:
+  # Three batches, so three folds: batch-independent is leave one batch out.
+  n_folds: 3
+  alpha: 0.10
+  calibration_fraction: 0.30
+  early_life_models:
+    - fleet_mean
+    - capacity_extrapolation
+    - ridge
+    - elastic_net
+    - gradient_boosting
+  online_models:
+    - fleet_mean
+    - slope_extrapolation
+    - ridge
+    - gradient_boosting
+  deployed_early_life_model: elastic_net
+  deployed_online_model: gradient_boosting
+
+online:
+  window_cycles: 50
+  stride: 25

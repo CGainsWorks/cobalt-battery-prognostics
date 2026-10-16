@@ -1,0 +1,585 @@
+{
+  "config": "severson",
+  "data_source": "real",
+  "dataset": {
+    "name": "Severson et al. (2019), Toyota Research Institute",
+    "card": "docs/datasets/severson-2019.md",
+    "n_cells": 129,
+    "n_batches": 3,
+    "cells_per_batch": {
+      "2017-05-12": 46,
+      "2017-06-30": 43,
+      "2018-04-12": 40
+    },
+    "censored_cells": 5,
+    "cell_cycles": 104824,
+    "cycle_life_min": 148,
+    "cycle_life_median": 736,
+    "cycle_life_max": 2237,
+    "nominal_capacity_ah": 1.1
+  },
+  "evaluation": {
+    "n_folds": 3,
+    "alpha": 0.1,
+    "calibration_fraction": 0.3,
+    "online_window_cycles": 50,
+    "online_stride": 25,
+    "seed": 20260822
+  },
+  "tasks": {
+    "early_life": {
+      "n_rows": 123,
+      "n_cells": 123,
+      "n_batches": 3,
+      "deployed_model": "elastic_net",
+      "alpha": 0.1,
+      "excluded": {
+        "died_within_window": 0,
+        "censored": 5,
+        "missing_curves": 0,
+        "gaps_in_window": 1
+      },
+      "protocols": {
+        "cell_independent": {
+          "models": {
+            "fleet_mean": {
+              "n_folds": 3,
+              "n": 123,
+              "rmse_cycles": 383.198,
+              "rmse_cycles_std": 79.0801,
+              "mae_cycles": 280.326,
+              "mae_cycles_std": 37.9252,
+              "mape": 0.377257,
+              "mape_std": 0.0021516,
+              "alpha_lambda": 0.317073,
+              "alpha_lambda_std": 0.0868055,
+              "bias_cycles": -73.4024,
+              "bias_cycles_std": 89.015,
+              "spearman": 0.0,
+              "spearman_std": 0.0
+            },
+            "capacity_extrapolation": {
+              "n_folds": 3,
+              "n": 123,
+              "rmse_cycles": 765.579,
+              "rmse_cycles_std": 80.0453,
+              "mae_cycles": 481.82,
+              "mae_cycles_std": 66.0806,
+              "mape": 0.717931,
+              "mape_std": 0.140234,
+              "alpha_lambda": 0.300813,
+              "alpha_lambda_std": 0.0829109,
+              "bias_cycles": 156.976,
+              "bias_cycles_std": 215.586,
+              "spearman": -0.113251,
+              "spearman_std": 0.149273
+            },
+            "ridge": {
+              "n_folds": 3,
+              "n": 123,
+              "rmse_cycles": 139.366,
+              "rmse_cycles_std": 40.9549,
+              "mae_cycles": 90.7005,
+              "mae_cycles_std": 13.2418,
+              "mape": 0.121585,
+              "mape_std": 0.0210075,
+              "alpha_lambda": 0.894309,
+              "alpha_lambda_std": 0.0114977,
+              "bias_cycles": -11.8757,
+              "bias_cycles_std": 21.2453,
+              "spearman": 0.920133,
+              "spearman_std": 0.0349519
+            },
+            "elastic_net": {
+              "n_folds": 3,
+              "n": 123,
+              "rmse_cycles": 133.096,
+              "rmse_cycles_std": 45.3688,
+              "mae_cycles": 84.7778,
+              "mae_cycles_std": 16.6893,
+              "mape": 0.116842,
+              "mape_std": 0.028594,
+              "alpha_lambda": 0.886179,
+              "alpha_lambda_std": 0.03042,
+              "bias_cycles": -7.19249,
+              "bias_cycles_std": 16.3073,
+              "spearman": 0.928002,
+              "spearman_std": 0.0282933
+            },
+            "gradient_boosting": {
+              "n_folds": 3,
+              "n": 123,
+              "rmse_cycles": 178.988,
+              "rmse_cycles_std": 21.7195,
+              "mae_cycles": 108.24,
+              "mae_cycles_std": 15.1703,
+              "mape": 0.127632,
+              "mape_std": 0.00616854,
+              "alpha_lambda": 0.829268,
+              "alpha_lambda_std": 0.0398291,
+              "bias_cycles": -27.4543,
+              "bias_cycles_std": 37.5887,
+              "spearman": 0.928641,
+              "spearman_std": 0.0268154
+            }
+          },
+          "intervals": {
+            "matched_calibration": {
+              "n_folds": 3,
+              "n": 0,
+              "nominal_coverage": 0.9,
+              "nominal_coverage_std": 0.0,
+              "picp": 0.97561,
+              "picp_std": 0.034493,
+              "coverage_gap": 0.0756098,
+              "coverage_gap_std": 0.034493,
+              "mean_width_log": 0.807659,
+              "mean_width_log_std": 0.748096,
+              "median_width_cycles": 2645.9,
+              "median_width_cycles_std": 3112.01
+            },
+            "random_calibration": {
+              "n_folds": 3,
+              "n": 0,
+              "nominal_coverage": 0.9,
+              "nominal_coverage_std": 0.0,
+              "picp": 0.99187,
+              "picp_std": 0.0114977,
+              "coverage_gap": 0.0918699,
+              "coverage_gap_std": 0.0114977,
+              "mean_width_log": 0.742062,
+              "mean_width_log_std": 0.578157,
+              "median_width_cycles": 1881.11,
+              "median_width_cycles_std": 1878.24
+            }
+          }
+        },
+        "batch_independent": {
+          "models": {
+            "fleet_mean": {
+              "n_folds": 3,
+              "n": 123,
+              "rmse_cycles": 480.783,
+              "rmse_cycles_std": 18.95,
+              "mae_cycles": 382.699,
+              "mae_cycles_std": 72.1868,
+              "mape": 0.549691,
+              "mape_std": 0.364426,
+              "alpha_lambda": 0.183333,
+              "alpha_lambda_std": 0.192931,
+              "bias_cycles": -68.7483,
+              "bias_cycles_std": 375.272,
+              "spearman": 0.0,
+              "spearman_std": 0.0
+            },
+            "capacity_extrapolation": {
+              "n_folds": 3,
+              "n": 123,
+              "rmse_cycles": 807.432,
+              "rmse_cycles_std": 118.225,
+              "mae_cycles": 601.424,
+              "mae_cycles_std": 79.6631,
+              "mape": 0.854391,
+              "mape_std": 0.430175,
+              "alpha_lambda": 0.05,
+              "alpha_lambda_std": 0.0707107,
+              "bias_cycles": 50.1907,
+              "bias_cycles_std": 459.34,
+              "spearman": -0.126698,
+              "spearman_std": 0.253389
+            },
+            "ridge": {
+              "n_folds": 3,
+              "n": 123,
+              "rmse_cycles": 179.873,
+              "rmse_cycles_std": 46.884,
+              "mae_cycles": 129.11,
+              "mae_cycles_std": 20.672,
+              "mape": 0.181176,
+              "mape_std": 0.0796327,
+              "alpha_lambda": 0.704457,
+              "alpha_lambda_std": 0.155833,
+              "bias_cycles": -19.3198,
+              "bias_cycles_std": 99.1663,
+              "spearman": 0.715751,
+              "spearman_std": 0.143613
+            },
+            "elastic_net": {
+              "n_folds": 3,
+              "n": 123,
+              "rmse_cycles": 189.694,
+              "rmse_cycles_std": 52.8319,
+              "mae_cycles": 134.904,
+              "mae_cycles_std": 23.3574,
+              "mape": 0.171736,
+              "mape_std": 0.054472,
+              "alpha_lambda": 0.745543,
+              "alpha_lambda_std": 0.165717,
+              "bias_cycles": -60.0963,
+              "bias_cycles_std": 105.819,
+              "spearman": 0.785782,
+              "spearman_std": 0.123981
+            },
+            "gradient_boosting": {
+              "n_folds": 3,
+              "n": 123,
+              "rmse_cycles": 331.128,
+              "rmse_cycles_std": 97.6231,
+              "mae_cycles": 242.281,
+              "mae_cycles_std": 40.6579,
+              "mape": 0.306932,
+              "mape_std": 0.103608,
+              "alpha_lambda": 0.323837,
+              "alpha_lambda_std": 0.198475,
+              "bias_cycles": -109.881,
+              "bias_cycles_std": 208.88,
+              "spearman": 0.514294,
+              "spearman_std": 0.180577
+            }
+          },
+          "intervals": {
+            "matched_calibration": {
+              "n_folds": 3,
+              "n": 0,
+              "nominal_coverage": 0.9,
+              "nominal_coverage_std": 0.0,
+              "picp": 0.896899,
+              "picp_std": 0.0778206,
+              "coverage_gap": -0.00310078,
+              "coverage_gap_std": 0.0778206,
+              "mean_width_log": 0.667796,
+              "mean_width_log_std": 0.269372,
+              "median_width_cycles": 980.939,
+              "median_width_cycles_std": 383.249
+            },
+            "random_calibration": {
+              "n_folds": 3,
+              "n": 0,
+              "nominal_coverage": 0.9,
+              "nominal_coverage_std": 0.0,
+              "picp": 0.926744,
+              "picp_std": 0.0612869,
+              "coverage_gap": 0.0267442,
+              "coverage_gap_std": 0.0612869,
+              "mean_width_log": 0.423415,
+              "mean_width_log_std": 0.182311,
+              "median_width_cycles": 756.286,
+              "median_width_cycles_std": 437.673
+            }
+          }
+        }
+      }
+    },
+    "online_soh": {
+      "n_rows": 3659,
+      "n_cells": 124,
+      "n_batches": 3,
+      "deployed_model": "gradient_boosting",
+      "alpha": 0.1,
+      "excluded": {
+        "censored": 5,
+        "too_short": 0
+      },
+      "protocols": {
+        "random_cycle": {
+          "models": {
+            "fleet_mean": {
+              "n_folds": 3,
+              "n": 3659,
+              "rmse_cycles": 416.642,
+              "rmse_cycles_std": 10.8523,
+              "mae_cycles": 289.134,
+              "mae_cycles_std": 7.23394,
+              "mape": 2.56613,
+              "mape_std": 0.119674,
+              "alpha_lambda": 0.165891,
+              "alpha_lambda_std": 0.00911087,
+              "bias_cycles": -161.906,
+              "bias_cycles_std": 13.7322,
+              "spearman": 0.0,
+              "spearman_std": 0.0
+            },
+            "slope_extrapolation": {
+              "n_folds": 3,
+              "n": 3659,
+              "rmse_cycles": 1414.12,
+              "rmse_cycles_std": 15.3559,
+              "mae_cycles": 1146.67,
+              "mae_cycles_std": 24.2658,
+              "mape": 2.70043,
+              "mape_std": 0.069992,
+              "alpha_lambda": 0.0628592,
+              "alpha_lambda_std": 0.00393021,
+              "bias_cycles": 1096.27,
+              "bias_cycles_std": 28.4087,
+              "spearman": 0.763676,
+              "spearman_std": 0.00762942
+            },
+            "ridge": {
+              "n_folds": 3,
+              "n": 3659,
+              "rmse_cycles": 172.562,
+              "rmse_cycles_std": 8.75738,
+              "mae_cycles": 102.42,
+              "mae_cycles_std": 2.62891,
+              "mape": 0.251418,
+              "mape_std": 0.0092038,
+              "alpha_lambda": 0.538947,
+              "alpha_lambda_std": 0.00702461,
+              "bias_cycles": -27.1582,
+              "bias_cycles_std": 8.02807,
+              "spearman": 0.942908,
+              "spearman_std": 0.00479818
+            },
+            "gradient_boosting": {
+              "n_folds": 3,
+              "n": 3659,
+              "rmse_cycles": 69.6875,
+              "rmse_cycles_std": 6.8036,
+              "mae_cycles": 40.647,
+              "mae_cycles_std": 2.90624,
+              "mape": 0.100889,
+              "mape_std": 0.00906734,
+              "alpha_lambda": 0.90271,
+              "alpha_lambda_std": 0.0126949,
+              "bias_cycles": -5.35001,
+              "bias_cycles_std": 1.69702,
+              "spearman": 0.990312,
+              "spearman_std": 0.000539746
+            }
+          },
+          "intervals": {
+            "matched_calibration": {
+              "n_folds": 3,
+              "n": 0,
+              "nominal_coverage": 0.9,
+              "nominal_coverage_std": 0.0,
+              "picp": 0.90271,
+              "picp_std": 0.0160437,
+              "coverage_gap": 0.00271027,
+              "coverage_gap_std": 0.0160437,
+              "mean_width_log": 0.191686,
+              "mean_width_log_std": 0.00924803,
+              "median_width_cycles": 173.346,
+              "median_width_cycles_std": 11.6552
+            },
+            "random_calibration": {
+              "n_folds": 3,
+              "n": 0,
+              "nominal_coverage": 0.9,
+              "nominal_coverage_std": 0.0,
+              "picp": 0.90271,
+              "picp_std": 0.0160437,
+              "coverage_gap": 0.00271027,
+              "coverage_gap_std": 0.0160437,
+              "mean_width_log": 0.191686,
+              "mean_width_log_std": 0.00924803,
+              "median_width_cycles": 173.346,
+              "median_width_cycles_std": 11.6552
+            }
+          }
+        },
+        "cell_independent": {
+          "models": {
+            "fleet_mean": {
+              "n_folds": 3,
+              "n": 3659,
+              "rmse_cycles": 415.218,
+              "rmse_cycles_std": 29.562,
+              "mae_cycles": 288.637,
+              "mae_cycles_std": 23.3255,
+              "mape": 2.58604,
+              "mape_std": 0.416626,
+              "alpha_lambda": 0.167388,
+              "alpha_lambda_std": 0.0185683,
+              "bias_cycles": -160.074,
+              "bias_cycles_std": 43.2976,
+              "spearman": 0.0,
+              "spearman_std": 0.0
+            },
+            "slope_extrapolation": {
+              "n_folds": 3,
+              "n": 3659,
+              "rmse_cycles": 1401.11,
+              "rmse_cycles_std": 58.471,
+              "mae_cycles": 1135.85,
+              "mae_cycles_std": 72.9215,
+              "mape": 2.68958,
+              "mape_std": 0.0746404,
+              "alpha_lambda": 0.063684,
+              "alpha_lambda_std": 0.0123844,
+              "bias_cycles": 1085.62,
+              "bias_cycles_std": 68.5672,
+              "spearman": 0.760716,
+              "spearman_std": 0.0188638
+            },
+            "ridge": {
+              "n_folds": 3,
+              "n": 3659,
+              "rmse_cycles": 210.934,
+              "rmse_cycles_std": 69.5704,
+              "mae_cycles": 108.394,
+              "mae_cycles_std": 11.8852,
+              "mape": 0.26431,
+              "mape_std": 0.0211931,
+              "alpha_lambda": 0.523276,
+              "alpha_lambda_std": 0.00258693,
+              "bias_cycles": -22.9579,
+              "bias_cycles_std": 19.2468,
+              "spearman": 0.940741,
+              "spearman_std": 0.00718189
+            },
+            "gradient_boosting": {
+              "n_folds": 3,
+              "n": 3659,
+              "rmse_cycles": 145.42,
+              "rmse_cycles_std": 40.7252,
+              "mae_cycles": 77.9321,
+              "mae_cycles_std": 14.9219,
+              "mape": 0.154868,
+              "mape_std": 0.0219875,
+              "alpha_lambda": 0.759634,
+              "alpha_lambda_std": 0.0341031,
+              "bias_cycles": -27.3238,
+              "bias_cycles_std": 9.91128,
+              "spearman": 0.971391,
+              "spearman_std": 0.00786359
+            }
+          },
+          "intervals": {
+            "matched_calibration": {
+              "n_folds": 3,
+              "n": 0,
+              "nominal_coverage": 0.9,
+              "nominal_coverage_std": 0.0,
+              "picp": 0.907832,
+              "picp_std": 0.0331591,
+              "coverage_gap": 0.00783222,
+              "coverage_gap_std": 0.0331591,
+              "mean_width_log": 0.391751,
+              "mean_width_log_std": 0.131364,
+              "median_width_cycles": 357.902,
+              "median_width_cycles_std": 121.63
+            },
+            "random_calibration": {
+              "n_folds": 3,
+              "n": 0,
+              "nominal_coverage": 0.9,
+              "nominal_coverage_std": 0.0,
+              "picp": 0.742439,
+              "picp_std": 0.0622493,
+              "coverage_gap": -0.157561,
+              "coverage_gap_std": 0.0622493,
+              "mean_width_log": 0.169531,
+              "mean_width_log_std": 0.0162494,
+              "median_width_cycles": 153.375,
+              "median_width_cycles_std": 23.7925
+            }
+          }
+        },
+        "batch_independent": {
+          "models": {
+            "fleet_mean": {
+              "n_folds": 3,
+              "n": 3659,
+              "rmse_cycles": 381.58,
+              "rmse_cycles_std": 132.287,
+              "mae_cycles": 278.523,
+              "mae_cycles_std": 84.2982,
+              "mape": 2.83328,
+              "mape_std": 0.963994,
+              "alpha_lambda": 0.187589,
+              "alpha_lambda_std": 0.0856403,
+              "bias_cycles": -121.998,
+              "bias_cycles_std": 185.011,
+              "spearman": 0.0,
+              "spearman_std": 0.0
+            },
+            "slope_extrapolation": {
+              "n_folds": 3,
+              "n": 3659,
+              "rmse_cycles": 1311.56,
+              "rmse_cycles_std": 141.339,
+              "mae_cycles": 1043.35,
+              "mae_cycles_std": 198.748,
+              "mape": 2.74967,
+              "mape_std": 0.458482,
+              "alpha_lambda": 0.0686681,
+              "alpha_lambda_std": 0.0249516,
+              "bias_cycles": 999.781,
+              "bias_cycles_std": 181.708,
+              "spearman": 0.709315,
+              "spearman_std": 0.0515289
+            },
+            "ridge": {
+              "n_folds": 3,
+              "n": 3659,
+              "rmse_cycles": 2541.77,
+              "rmse_cycles_std": 3183.58,
+              "mae_cycles": 258.402,
+              "mae_cycles_std": 85.4802,
+              "mape": 0.587223,
+              "mape_std": 0.173485,
+              "alpha_lambda": 0.303764,
+              "alpha_lambda_std": 0.0997116,
+              "bias_cycles": 93.0385,
+              "bias_cycles_std": 228.369,
+              "spearman": 0.928119,
+              "spearman_std": 0.0105215
+            },
+            "gradient_boosting": {
+              "n_folds": 3,
+              "n": 3659,
+              "rmse_cycles": 297.576,
+              "rmse_cycles_std": 86.0317,
+              "mae_cycles": 178.497,
+              "mae_cycles_std": 45.8723,
+              "mape": 0.341426,
+              "mape_std": 0.0520094,
+              "alpha_lambda": 0.359097,
+              "alpha_lambda_std": 0.0485947,
+              "bias_cycles": -97.1998,
+              "bias_cycles_std": 143.717,
+              "spearman": 0.916541,
+              "spearman_std": 0.0301358
+            }
+          },
+          "intervals": {
+            "matched_calibration": {
+              "n_folds": 3,
+              "n": 0,
+              "nominal_coverage": 0.9,
+              "nominal_coverage_std": 0.0,
+              "picp": 0.916114,
+              "picp_std": 0.0167624,
+              "coverage_gap": 0.0161142,
+              "coverage_gap_std": 0.0167624,
+              "mean_width_log": 0.812709,
+              "mean_width_log_std": 0.163094,
+              "median_width_cycles": 699.764,
+              "median_width_cycles_std": 199.641
+            },
+            "random_calibration": {
+              "n_folds": 3,
+              "n": 0,
+              "nominal_coverage": 0.9,
+              "nominal_coverage_std": 0.0,
+              "picp": 0.312136,
+              "picp_std": 0.0629763,
+              "coverage_gap": -0.587864,
+              "coverage_gap_std": 0.0629763,
+              "mean_width_log": 0.155363,
+              "mean_width_log_std": 0.00896836,
+              "median_width_cycles": 123.321,
+              "median_width_cycles_std": 21.9781
+            }
+          }
+        }
+      }
+    }
+  },
+  "notes": [
+    "Batch-independent grouped calibration holds out 1 of the 2 training batches and fits on 1. The library warns below 4, so with three batches the grouped-against-random calibration comparison is starved and its coverage figures are reported, not relied on.",
+    "A Severson batch is a test campaign with its own set of charging policies, not a known manufacturing lot."
+  ]
+}

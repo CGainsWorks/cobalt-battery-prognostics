@@ -8,13 +8,20 @@ them is vague.
 
 ## The headline limitation
 
-**No physical cell was tested. There was no cycler, no thermal chamber and no
-cells.** Every figure, table and model in this repository was produced from the
-simulator in `cobalt.sim`.
+**No physical cell was tested here. There was no cycler, no thermal chamber
+and no cells.** Every figure, table and model in this repository was produced
+from the simulator in `cobalt.sim`, with one exception: `results/severson/` and
+`analysis/severson/`, which run the evaluation protocol on the public laboratory
+cells of Severson et al. (2019). Those cells were cycled by their authors, not
+here. See [`datasets/severson-2019.md`](datasets/severson-2019.md).
+
+The battery link is implemented over CAN, but both ends of every run are
+simulated: a simulated BMS node on python-can's virtual bus or a Linux vcan
+interface. No physical CAN adapter or BMS has been connected.
 
 That is stated in the README's first paragraph, in the first field of the model
-card, in the OpenAPI description of the service and in the docstring of the
-module that would talk to real hardware. It is not a caveat added at the end.
+card, in the OpenAPI description of the service and in the docstrings of the
+CAN modules. It is not a caveat added at the end.
 
 ---
 
@@ -125,11 +132,39 @@ them does not care where the telemetry came from.
 
 ---
 
+## What the real-cell run does and does not settle
+
+Running the protocol on the Severson et al. cells settles two things. The leak
+the simulator predicts is real: the same online model scores roughly four times
+the error on a held-out test campaign that it scores on random rows. And
+random-row calibration undercovers badly on a held-out campaign there too.
+
+It does not settle the rest:
+
+- **One cell type, in a laboratory.** LFP/graphite at 30 degC with a constant 4C
+  discharge. Nothing about NMC, about temperature extremes or about the duty a
+  pack sees in service.
+- **Campaigns, not lots.** The three Severson batches are test campaigns with
+  different charging policies. The batch-independent number there measures a
+  new campaign and policy set, which is related to a new manufacturing lot but
+  is not the same question.
+- **Three groups is the floor.** Grouped calibration fits on one campaign and
+  calibrates on another, below the four-group threshold the library warns at.
+  The early-life intervals in particular are fragile: one outlying cell in a
+  calibration set of twenty-five widens a fold's interval by a factor of eight.
+- **The cost layer is not run on it.** Its prices describe a commercial pack.
+- **Licence unconfirmed.** See the dataset card. No data is committed.
+
 ## What would change this
 
 The rig is specified in [`HARDWARE.md`](HARDWARE.md), including why three
 coating lots is the minimum that makes this repository's central argument
 testable at all: with fewer, a batch-independent protocol cannot be run.
+
+On the link side, `CanBms` already takes any python-can interface. What a real
+pack adds is the vendor's own DBC and checksum scheme, very likely the
+integration of a per-cycle summary from live current and voltage, and a physical
+bus; [`HARDWARE.md`](HARDWARE.md) section 4 has the detail.
 
 Nothing else in the codebase would change. The features, the split protocols,
 the models, the conformal calibration, the cost models and the service all

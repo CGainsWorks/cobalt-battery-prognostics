@@ -72,10 +72,14 @@ class OutOfFoldPredictions:
         return pd.DataFrame(data)
 
 
-def _model_kwargs(config: Config) -> dict[str, Any]:
+#: Nameplate capacity of the simulated cell. Real data passes its own.
+SIMULATED_RATED_CAPACITY_AH = 2.20
+
+
+def _model_kwargs(config: Config, rated_capacity_ah: float) -> dict[str, Any]:
     return {
         "seed": config.seed,
-        "rated_capacity_ah": 2.20,
+        "rated_capacity_ah": rated_capacity_ah,
         "end_of_life_soh": config.fleet.end_of_life_soh,
     }
 
@@ -107,6 +111,7 @@ def evaluate_model(
     config: Config,
     with_intervals: bool = False,
     grouped_calibration: bool = True,
+    rated_capacity_ah: float = SIMULATED_RATED_CAPACITY_AH,
 ) -> tuple[dict[str, float], OutOfFoldPredictions, dict[str, float] | None]:
     """Cross-validate one model under one protocol.
 
@@ -135,7 +140,7 @@ def evaluate_model(
         train_target = target[split.train_index]
         test_target = target[split.test_index]
 
-        base = build(task, model_name, **_model_kwargs(config))
+        base = build(task, model_name, **_model_kwargs(config, rated_capacity_ah))
 
         if with_intervals:
             group_column = _CALIBRATION_GROUP[protocol] if grouped_calibration else None
@@ -189,7 +194,12 @@ def evaluate_model(
     return aggregate(fold_metrics), predictions, intervals
 
 
-def run_task(task: str, frame: pd.DataFrame, config: Config) -> dict[str, Any]:
+def run_task(
+    task: str,
+    frame: pd.DataFrame,
+    config: Config,
+    rated_capacity_ah: float = SIMULATED_RATED_CAPACITY_AH,
+) -> dict[str, Any]:
     """Every model under every protocol valid for the task.
 
     The deployed model is additionally run with conformal intervals twice: once
@@ -228,7 +238,13 @@ def run_task(task: str, frame: pd.DataFrame, config: Config) -> dict[str, Any]:
 
         for model_name in model_names:
             metrics, predictions, _ = evaluate_model(
-                task, frame, protocol, model_name, config, with_intervals=False
+                task,
+                frame,
+                protocol,
+                model_name,
+                config,
+                with_intervals=False,
+                rated_capacity_ah=rated_capacity_ah,
             )
             models[model_name] = metrics
             pooled[model_name] = predictions
@@ -241,6 +257,7 @@ def run_task(task: str, frame: pd.DataFrame, config: Config) -> dict[str, Any]:
             config,
             with_intervals=True,
             grouped_calibration=True,
+            rated_capacity_ah=rated_capacity_ah,
         )
         _, mismatched_predictions, mismatched = evaluate_model(
             task,
@@ -250,6 +267,7 @@ def run_task(task: str, frame: pd.DataFrame, config: Config) -> dict[str, Any]:
             config,
             with_intervals=True,
             grouped_calibration=False,
+            rated_capacity_ah=rated_capacity_ah,
         )
 
         out["protocols"][protocol] = {

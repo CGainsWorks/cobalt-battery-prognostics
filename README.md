@@ -10,8 +10,10 @@ bill.
 
 > **There is no hardware behind this.** No cycler, no thermal chamber, no cells.
 > Every number on this page comes from a physics-informed simulator in
-> [`src/cobalt/sim`](src/cobalt/sim) and the simulated cells are smoother and
-> better behaved than real ones. What that permits and what it forbids is set
+> [`src/cobalt/sim`](src/cobalt/sim), except the section
+> [On real cells](#on-real-cells-severson-et-al-2019), which runs the same
+> protocol on 124 public laboratory cells from Severson et al. (2019). The
+> simulated cells are smoother and better behaved than real ones. What that permits and what it forbids is set
 > out in [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md), the model card leads with
 > it. The battery link is real code against a simulated far end: a CAN
 > receiver, [`src/cobalt/hal/can_bms.py`](src/cobalt/hal/can_bms.py), decoding a
@@ -82,6 +84,75 @@ about a third of the fleet.
 
 Full protocol definitions and the leakage rules that keep these honest:
 [`docs/EVALUATION_PROTOCOL.md`](docs/EVALUATION_PROTOCOL.md).
+
+---
+
+## On real cells: Severson et al. (2019)
+
+Everything above is simulated. The same feature builders, split protocols,
+leakage assertions, models and conformal calibration also run, unchanged, on the
+public dataset behind Severson et al., *Data-driven prediction of battery
+cycle life before capacity degradation* (Nature Energy, 2019), published by the
+Toyota Research Institute: A123 LFP/graphite 18650 cells fast-charged under 70
+policies in three test campaigns months apart. Following the authors' own
+loading code, 124 cells reach end of life and five that never did are excluded
+as censored. The dataset card, with the licence position and every
+preprocessing decision, is
+[`docs/datasets/severson-2019.md`](docs/datasets/severson-2019.md).
+
+<!-- BEGIN:severson -->
+| Task | Model | Cell-independent | Batch-independent |
+| --- | --- | --- | --- |
+| Early life | Fleet mean (floor) | 383 ± 79 (37.7%) | 481 ± 19 (55.0%) |
+| Early life | Capacity extrapolation | 766 ± 80 (71.8%) | 807 ± 118 (85.4%) |
+| Early life | Ridge | 139 ± 41 (12.2%) | 180 ± 47 (18.1%) |
+| Early life | Elastic net | 133 ± 45 (11.7%) | 190 ± 53 (17.2%) |
+| Early life | Gradient boosting | 179 ± 22 (12.8%) | 331 ± 98 (30.7%) |
+| Online RUL | Fleet mean (floor) | 415 ± 30 (258.6%) | 382 ± 132 (283.3%) |
+| Online RUL | Slope extrapolation | 1401 ± 58 (269.0%) | 1312 ± 141 (275.0%) |
+| Online RUL | Ridge | 211 ± 70 (26.4%) | 2542 ± 3184 (58.7%) |
+| Online RUL | Gradient boosting | 145 ± 41 (15.5%) | 298 ± 86 (34.1%) |
+<!-- END:severson -->
+
+RMSE in cycles, mean ± standard deviation over three folds, then mean absolute
+percentage error. Batch-independent here means leave one test campaign out.
+
+What carries over from the simulator and what does not:
+
+- **The leak is real.** The online gradient-boosted model scores 70 cycles RMSE
+  on random rows, 145 on held-out cells and 298 on a held-out campaign
+  ([full table](analysis/severson/EVALUATION.md)). Four times the error, same
+  model, same data.
+- **Random calibration undercovers on a new campaign.** A 90% online interval
+  calibrated on random rows covers 31% of a held-out campaign; calibrated on a
+  held-out campaign it covers 92%. With three campaigns the grouped calibration
+  fits on a single one, so treat the size of that gap as indicative.
+- **Early-life prediction works on real cells and degrades on a new campaign.**
+  The elastic net on the Severson features reaches 11.7% mean absolute
+  percentage error on held-out cells and 17.2% on a held-out campaign. The
+  paper reports 9.1% on its own split, which interleaves cells from two
+  campaigns, so the numbers are not directly comparable.
+- **The model ranking reverses.** On the simulator gradient boosting wins; on
+  real cells it overfits and loses to the linear models, badly so on a held-out
+  campaign (31% against 17%).
+- **The early-life intervals are fragile.** In one of the three
+  cell-independent folds the calibration set holds the shortest-lived cell in
+  the dataset (148 cycles, against a median of 736) and its residual alone
+  stretches that fold's interval to a factor of more than eight either side.
+  The other two folds give a factor of about 1.4. Twenty-five calibration
+  cells is too few to absorb one outlier.
+
+The cost layer is not run on real data: its prices describe a commercial pack
+and a laboratory dataset would only lend them a real-data label. Reproducing
+needs about 8.3 GB of download, which is never committed:
+
+```bash
+python -m cobalt.cli real-data extract --fetch --delete-raw
+python -m cobalt.cli real-data evaluate --update-readme
+```
+
+CI re-runs the evaluation from a cached extract and fails if it drifts from
+[`results/severson/summary.json`](results/severson/summary.json).
 
 ---
 
@@ -419,10 +490,12 @@ this repository's argument testable at all.
 | --- | --- |
 | `make demo` | everything, end to end, from nothing |
 | `make smoke` | the same pipeline on a small fleet, about two minutes |
-| `make test` | the test suite |
+| `make test` | the test suite, 242 tests |
 | `make lint` | ruff check and format, over src, tests and scripts |
 | `make check` | assert the README's tables match the committed results |
 | `make serve` | the fleet service |
+| `make stream-can` | a simulated pack through a simulated BMS, a CAN bus and the DBC |
+| `python -m cobalt.cli real-data ...` | download, extract and evaluate the Severson et al. cells |
 | `docker compose up` | `make demo` in a container |
 
 No number in this README is typed by hand. Every table between a pair of
@@ -444,18 +517,26 @@ The full report, with fold standard deviations and confusion matrices, is
 
 ---
 
+What is done, what is not and what is only simulated: [`STATUS.md`](STATUS.md).
+
+---
+
 ## What I would not claim from this
 
 The honest boundary, in full in [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md).
 The short version:
 
-- **No accuracy number here transfers to a real cell.** The simulator is
+- **No simulated accuracy number transfers to a real cell.** The simulator is
   smoother than reality. One symptom is measurable in this repository: the
   elastic net leans on the capacity fade slope rather than on the `dQ(V)`
   variance that dominates the published real-cell result, because a fade slope
   measured over a hundred simulated cycles is far cleaner than a real one.
   A simulator cannot reproduce the motivation for a feature it has designed
   away.
+- **The real-cell numbers are one laboratory dataset.** One cell type, one
+  chamber temperature, one discharge rate, laboratory cycling rather than a
+  fleet, and three test campaigns rather than manufacturing lots. They show the
+  protocol and the leak on real cells; they are not a fleet accuracy figure.
 - **The methodological results are the transferable part.** That a random split
   leaks, that grouped calibration is required for honest intervals and that the
   cost-optimal decision is a quantile rather than a point estimate are
